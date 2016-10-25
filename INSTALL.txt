@@ -1,0 +1,21 @@
+Dependencies:
+=============
+
+To build this program you need to install libsndfile. All other dependencies are shipped in the folder external.
+
+Building:
+=========
+
+The following commands build the program:
+
+mkdir build
+cd build
+cmake ..
+make
+
+You can also build the documentation using
+
+make doc
+
+
+

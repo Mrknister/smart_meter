@@ -7,7 +7,7 @@
 class EventDetector
 {
 public:
-    void startAnalyzing(DataManager& data_manager);
+    void startAnalyzing(DefaultDataManager& data_manager);
 };
 
 #endif // EVENTDETECTOR_H

@@ -19,8 +19,11 @@ struct PowerMeterData {
     // attributes
     float scale_volts = 1.0; /**< The voltage values are multiplied by this factor. */
     float scale_amps = 1.0; /**< The ampere values are multiplied by this factor. */
-    unsigned int data_points_per_period = 320;
+    unsigned int sample_rate = 12000;
     unsigned int max_data_points_in_queue = 16000;
+    constexpr unsigned int dataPointsPerPeriod() const {
+        return sample_rate/50;
+    }
 
 
 };

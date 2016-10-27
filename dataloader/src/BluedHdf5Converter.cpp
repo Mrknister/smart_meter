@@ -18,8 +18,7 @@ void BluedHdf5Converter::convertToHdf5(const std::string& input_file, const std:
 
     }
     input.stopReading();
-    mgr.getDataPoints(10000);
-    
+
     input.stopGracefully();
 
 
@@ -31,27 +30,31 @@ void BluedHdf5Converter::writeData(DefaultDataManager& mgr)
 
     DataSpace mspace (rank, hyper_slab_dimensions);
 
-    for(int i = 0; i<12000*5;++i) {
-        auto data_point = mgr.getDataPoints(1);
+    const int buffer_size = 1000;
+    DataPoint buffer[buffer_size];
+
+    for(int i = 0; i<120;++i) {
+        DataPoint data_point;
+        mgr.getDataPoints(&data_point, &data_point + 1);
+
         hsize_t size[2] = {offset[0] + 1, this->dims[1]};
         dataset.extend( size );
 
         DataSpace fspace = dataset.getSpace ();
 
         fspace.selectHyperslab( H5S_SELECT_SET, hyper_slab_dimensions, offset );
-        void* data_ptr =& data_point[0];
+        void* data_ptr = &data_point;
         dataset.write( (void*) &data_ptr, PredType::NATIVE_FLOAT,mspace , fspace );
 
-        this->offset[0] += 1;
+        offset[0] += 1;
     }
-    
 }
 
 void BluedHdf5Converter::createNewDataSpace(const std::string& output_file)
 {
 
     H5std_string  FILE_NAME(output_file.c_str());
-    H5std_string  DATASET_NAME("IntArray");
+    H5std_string  DATASET_NAME("FloatArray");
 
     file = H5File(FILE_NAME, H5F_ACC_TRUNC);
 

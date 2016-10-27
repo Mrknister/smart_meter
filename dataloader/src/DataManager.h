@@ -1,10 +1,7 @@
 #ifndef _DATAMANAGER_H_
 #define _DATAMANAGER_H_
 
-#include <vector>
 #include <deque>
-#include <thread>
-#include <shared_mutex>
 #include <mutex>
 #include <condition_variable>
 #include <iostream>
@@ -27,46 +24,30 @@ template<typename DataPointType>
 class  DataManager {
 public:
     ~DataManager();
+    
+    void setQueueMaxSize(unsigned long max_size);
+    unsigned long getQueueMaxSize();
+    unsigned long getQueueSize();
+
+
     /**
-     * @brief Sets the config. This function blocks until all functions that need to read the config have completed.
+     * @brief Fills the iterator with data points. If the stream writing to this DataManager notifies the datamanager that no more data will be following, the returning iterator will point to the position after the last element.
      *
-     * @param config The configuration that is to be set.
+     * @param begin Iterator to first writing destination.
+     * @param end Iterator end. If the running iterator equals end, no more data will be written.
      *
      */
-    void setConfig(const PowerMeterData& config);
-
-    /**
-     * @brief Copies the config to the user.
-     *
-     * @returns A copy of the current configuration.
-     */
-    PowerMeterData getConfig();
-
-    /**
-     * @brief blocks until a full period of electrical data can be read and returns it in a vector.
-     */
-    std::vector<DataPointType> getElectricalPeriod();
-
-    /**
-     * @brief Removes one period from the queue
-     */
-    void nextElectricalPeriod();
-
-
-    /**
-     * @brief blocks until the number of data points has been reached.
-     */
-    std::vector<DataPointType> getDataPoints(unsigned int num_data_points);
-
-
     template<class IteratorType>
-    void getDataPoints(IteratorType begin, IteratorType end);
+    IteratorType getDataPoints(IteratorType begin, IteratorType end);
+
 
     /**
-     * @brief Removes num_data_points data points from the queue
+     * @brief Removes num_data_points DataPoints from the queue
+     *
+     * @param num_data_points Number of data points to be removed.
+     *
      */
-    void nextDataPoints(unsigned int num_data_points);
-
+    void nextDataPoints(unsigned long num_data_points);
 
     /**
      * @brief Adds a datapoint to the back of the queue. Blocks until less than PowerMeterData::max_data_points_in_queue is in the queue.
@@ -86,7 +67,15 @@ public:
     void addDataPoints(IteratorType begin, IteratorType end);
 
 
+    /**
+     * @brief Unblocks calls to getDataPoints and nextData by safely returning the data already read for the former and removing the maximum possible amount of data for the latter.
+     *
+     * @param data_point The datapoint that is to be added.
+     *
+     */
+    void unblockAllReadOperations();
 
+    void notifyStreamEnd();
 
 
 private:
@@ -101,28 +90,9 @@ private:
     std::mutex data_queue_mutex;
     std::deque<DataPointType> data_queue;
     bool stream_ended = true;
-
-    PowerMeterData conf;
-
+    unsigned long queue_max_size;
 };
 
-
-template<typename DataPointType>
-template<typename IteratorType>
-void DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end)
-{
-    auto waiting_function = this->getQueueNotFullWaiter();
-
-    while(begin != end) {
-        std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
-        this->deque_overflow.wait(deque_overflow_wait_lock, waiting_function);
-        long pushable_elements =  this->conf.max_data_points_in_queue - this->data_queue.size();
-        long elements_pushed = std::min(end - begin, pushable_elements);
-        this->data_queue.insert(data_queue.end(), begin , begin+ elements_pushed);
-        begin += elements_pushed;
-        this->deque_underflow.notify_one();
-    }
-}
 
 
 template<typename DataPointType>
@@ -136,68 +106,73 @@ DataManager<DataPointType>::~DataManager()
 }
 
 template<typename DataPointType>
-void DataManager<DataPointType>::setConfig(const PowerMeterData& config)
+unsigned long DataManager<DataPointType>::getQueueMaxSize()
 {
-    std::lock_guard<std::mutex> l(this->data_queue_mutex);
-    this->conf = config;
+    return this->queue_max_size;
 }
 
 template<typename DataPointType>
-PowerMeterData DataManager<DataPointType>::getConfig()
+unsigned long DataManager<DataPointType>::getQueueSize()
 {
-    return conf;
+    std::unique_lock<std::mutex> queue_lock(this->data_queue_mutex);
+
+    return this->queue->size();
 }
 
 template<typename DataPointType>
-std::vector<DataPointType> DataManager<DataPointType>::getElectricalPeriod()
+void DataManager<DataPointType>::setQueueMaxSize(unsigned long max_size)
 {
-    return this->getDataPoints(this->conf.dataPointsPerPeriod());
+    std::unique_lock<std::mutex> queue_lock(this->data_queue_mutex);
+    this->queue_max_size = max_size;
+    this->deque_overflow.notify_one();
 }
 
-template<typename DataPointType>
-void DataManager<DataPointType>::nextElectricalPeriod()
-{
-    this->nextDataPoints(this->conf.dataPointsPerPeriod());
-}
 
-template<typename DataPointType>
-std::vector<DataPointType> DataManager<DataPointType>::getDataPoints(unsigned int num_data_points)
-{
-
-    std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
-
-    auto queue_has_enough_elements = this->getQueueHasEnoughElementsWaiter(num_data_points);
-    this->deque_underflow.wait(deque_overflow_wait_lock, queue_has_enough_elements);
-
-    std::vector<DataPoint> result(data_queue.begin(), data_queue.begin() + num_data_points);
-    return result;
-}
 
 template<typename DataPointType>
 template<typename IteratorType>
-void DataManager<DataPointType>::getDataPoints(IteratorType begin, IteratorType end)
+void DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end)
 {
-    auto waiting_function = this->getQueueNotEmptyWaiter();
+    auto waiting_function = this->getQueueNotFullWaiter();
 
     while(begin != end) {
         std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
-        this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
-        long pullable_elements =  this->conf.max_data_points_in_queue - this->data_queue.size();
-        long elements_pulled = std::min(end - begin, pullable_elements);
-        this->data_queue.insert(data_queue.end(), begin , begin+ elements_pulled);
-        begin += elements_pulled;
+        this->deque_overflow.wait(deque_overflow_wait_lock, waiting_function);
+        long pushable_elements =  this->queue_max_size - this->data_queue.size();
+        long elements_pushed = std::min(end - begin, pushable_elements);
+        this->data_queue.insert(data_queue.end(), begin , begin + elements_pushed);
+        begin += elements_pushed;
+        this->deque_underflow.notify_one();
     }
 }
 
+
 template<typename DataPointType>
-void DataManager<DataPointType>::nextDataPoints(unsigned int num_data_points)
+template<typename IteratorType>
+IteratorType DataManager<DataPointType>::getDataPoints(IteratorType begin, IteratorType end)
+{
+    auto waiting_function = this->getQueueNotEmptyWaiter();
+
+    while(begin != end && !this->stream_ended) {
+        std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
+        this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
+        
+        long pullable_elements =  this->data_queue.size();
+        long elements_pulled = std::min(end - begin, pullable_elements);
+        this->data_queue.insert(data_queue.end(), begin , begin + elements_pulled);
+        begin += elements_pulled;
+    }
+    return begin;
+}
+
+template<typename DataPointType>
+void DataManager< DataPointType >::nextDataPoints(unsigned long num_data_points)
 {
     std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
 
     auto queue_has_enough_elements = this->getQueueHasEnoughElementsWaiter(num_data_points);
     this->deque_underflow.wait(deque_overflow_wait_lock, queue_has_enough_elements);
     this->data_queue.erase(data_queue.begin(), data_queue.begin() + num_data_points);
-
     this->deque_overflow.notify_one();
 }
 
@@ -235,8 +210,14 @@ template<typename DataPointType>
 std::function<bool ()> DataManager<DataPointType>::getQueueNotFullWaiter()
 {
     return [this]()-> bool {
-        return this->data_queue.size() < this->conf.max_data_points_in_queue;
+        return this->data_queue.size() < this->queue_max_size;
     };
+}
+
+template <typename DataPointType>
+void DataManager<DataPointType>::notifyStreamEnd() {
+    this->stream_ended = true;
+    this->deque_underflow.notify_all();
 }
 
 

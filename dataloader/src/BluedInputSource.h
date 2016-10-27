@@ -3,6 +3,8 @@
 
 #include <string>
 #include <thread>
+#include <vector>
+
 #include "DataManager.h"
 
 
@@ -20,6 +22,7 @@ public:
 
 private:
     void run(const std::string& file_path, DefaultDataManager& mgr, std::function<void ()> callback);
+    void readFile(const std::string& file_path, DefaultDataManager& mgr);
     void runLocations(std::vector<std::string> locations, DefaultDataManager& mgr, std::function<void ()> callback);
 
     static DataPoint matchLine(std::ifstream& input_stream);

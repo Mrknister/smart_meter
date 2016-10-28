@@ -5,56 +5,57 @@
 
 using namespace H5;
 
-void BluedHdf5Converter::convertToHdf5(const std::string& input_file, const std::string& output_file)
-{
-    DefaultDataManager mgr;
+void BluedHdf5Converter::convertToHdf5(const std::string &input_file, const std::string &output_file) {
+    BluedDataManager mgr;
     BluedInputSource input;
     input.readWholeLocation(input_file, mgr);
 
     try {
         this->createNewDataSpace(output_file);
         this->writeData(mgr);
-    } catch(...) {
+    } catch (...) {
 
     }
-    input.stopReading();
-
     input.stopGracefully();
-
-
 }
-void BluedHdf5Converter::writeData(DefaultDataManager& mgr)
-{
-    hsize_t offset[2] = {0,0};
-    hsize_t hyper_slab_dimensions[2] = { 1, 2};
 
-    DataSpace mspace (rank, hyper_slab_dimensions);
+void BluedHdf5Converter::writeData(BluedDataManager &mgr) {
+    hsize_t offset[2] = {0, 0};
+
 
     const int buffer_size = 1000;
-    DataPoint buffer[buffer_size];
+    BluedDataPoint buffer[buffer_size];
 
-    for(int i = 0; i<120;++i) {
-        DataPoint data_point;
-        mgr.getDataPoints(&data_point, &data_point + 1);
+    int count = 0;
+    while (true) {
+        BluedDataPoint *buffer_end = mgr.popDataPoints(buffer, &buffer[buffer_size]);
+        hsize_t buffer_len = buffer_end - buffer;
+        if (buffer_len == 0) {
+            break;
+        }
+        hsize_t size[2] = {offset[0] + buffer_len, this->dims[1]};
+        dataset.extend(size);
+        hsize_t hyper_slab_dimensions[2] = {buffer_len, ndims};
+        DataSpace mspace(rank, hyper_slab_dimensions);
 
-        hsize_t size[2] = {offset[0] + 1, this->dims[1]};
-        dataset.extend( size );
 
-        DataSpace fspace = dataset.getSpace ();
+        DataSpace fspace = dataset.getSpace();
 
-        fspace.selectHyperslab( H5S_SELECT_SET, hyper_slab_dimensions, offset );
-        void* data_ptr = &data_point;
-        dataset.write( (void*) &data_ptr, PredType::NATIVE_FLOAT,mspace , fspace );
-
-        offset[0] += 1;
+        fspace.selectHyperslab(H5S_SELECT_SET, hyper_slab_dimensions, offset);
+        dataset.write((void *) buffer, PredType::NATIVE_FLOAT, mspace, fspace);
+        offset[0] += buffer_len;
+        ++count;
+        if(count % 1000 == 0) {
+            std::cout << "Converted elements: " << offset[0]  << std::endl;
+        }
     }
+    std::cout << "Total converted elements: " << offset[0]  << std::endl;
 }
 
-void BluedHdf5Converter::createNewDataSpace(const std::string& output_file)
-{
+void BluedHdf5Converter::createNewDataSpace(const std::string &output_file) {
 
-    H5std_string  FILE_NAME(output_file.c_str());
-    H5std_string  DATASET_NAME("FloatArray");
+    H5std_string FILE_NAME(output_file.c_str());
+    H5std_string DATASET_NAME("data");
 
     file = H5File(FILE_NAME, H5F_ACC_TRUNC);
 

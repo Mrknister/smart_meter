@@ -7,19 +7,19 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <algorithm>
 
-void BluedInputSource::startReading(const std::string &file_path, DefaultDataManager &mgr) {
+void BluedInputSource::startReading(const std::string &file_path, BluedDataManager &mgr) {
     this->startReading(file_path, mgr, []() {});
 }
 
 
 void
-BluedInputSource::startReading(const std::string &file_path, DefaultDataManager &mgr, std::function<void()> callback) {
+BluedInputSource::startReading(const std::string &file_path, BluedDataManager &mgr, std::function<void()> callback) {
     this->continue_reading = true;
     auto runner_function = std::bind(&BluedInputSource::run, this, file_path, std::ref(mgr), callback);
     this->runner = std::thread(runner_function);
 }
 
-void BluedInputSource::readWholeLocation(const std::string &directory, DefaultDataManager &mgr) {
+void BluedInputSource::readWholeLocation(const std::string &directory, BluedDataManager &mgr) {
     this->readWholeLocation(directory, mgr, []() {});
 }
 
@@ -35,7 +35,7 @@ void BluedInputSource::stopReading() {
 
 }
 
-void BluedInputSource::readWholeLocation(const std::string &directory, DefaultDataManager &mgr,
+void BluedInputSource::readWholeLocation(const std::string &directory, BluedDataManager &mgr,
                                          std::function<void()> callback) {
     using namespace boost::filesystem;
     path p(directory);
@@ -62,24 +62,28 @@ void BluedInputSource::readWholeLocation(const std::string &directory, DefaultDa
     this->runner = std::thread(runner_function);
 }
 
-void BluedInputSource::runLocations(std::vector<std::string> locations, DefaultDataManager &mgr,
+void BluedInputSource::runLocations(std::vector<std::string> locations, BluedDataManager &mgr,
                                     std::function<void()> callback) {
+    mgr.startStreaming();
     for (auto &file_path : locations) {
         if (!this->continue_reading) {
             break;
         }
-        run(file_path, mgr, []() {});
+        readFile(file_path, mgr);
     }
+    mgr.notifyStreamEnd();
     callback();
 }
 
 
-void BluedInputSource::run(const std::string &file_path, DefaultDataManager &mgr, std::function<void()> callback) {
+void BluedInputSource::run(const std::string &file_path, BluedDataManager &mgr, std::function<void()> callback) {
+    mgr.startStreaming();
     readFile(file_path, mgr);
+    mgr.notifyStreamEnd();
     callback();
 }
 
-DataPoint BluedInputSource::matchLine(std::ifstream &input_stream) {
+BluedDataPoint BluedInputSource::matchLine(std::ifstream &input_stream) {
     std::string line;
 
     // read csv values
@@ -97,25 +101,27 @@ DataPoint BluedInputSource::matchLine(std::ifstream &input_stream) {
     input_stream >> voltage_a;
 
     // skip to next line
-    input_stream.ignore(10, '\r');
+    input_stream.ignore(50, '\r');
 
-    return DataPoint(voltage_a, current_a);
+    return BluedDataPoint(0, current_a, 0 ,voltage_a);
 }
 
-bool BluedInputSource::readOnce(std::ifstream &input_stream, DefaultDataManager &mgr) {
+bool BluedInputSource::readOnce(std::ifstream &input_stream, BluedDataManager &mgr) {
     const unsigned int buffer_size = 10000;
-    static DataPoint buffer[buffer_size];
+    static BluedDataPoint buffer[buffer_size];
+    bool success = true;
     unsigned int i = 0;
     for (; i < buffer_size; ++i) {
         if (!(input_stream.good() && this->continue_reading)) {
             i -= 1;
-            return false;
+            success = false;
+            break;
 
         }
         buffer[i] = BluedInputSource::matchLine(input_stream);
     }
     mgr.addDataPoints(buffer, buffer + i);
-    return true;
+    return success;
 }
 
 
@@ -130,7 +136,7 @@ bool BluedInputSource::skipToData(std::ifstream &input_stream) {
     return false;
 }
 
-void BluedInputSource::readFile(const std::string &file_path, DefaultDataManager &mgr) {
+void BluedInputSource::readFile(const std::string &file_path, BluedDataManager &mgr) {
     std::ifstream input_stream;
     input_stream.open(file_path, std::ifstream::in);
 

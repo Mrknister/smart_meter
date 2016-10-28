@@ -6,28 +6,31 @@
 #include <vector>
 
 #include "DataManager.h"
+#include "BluedDataPoint.h"
 
+typedef DataManager<BluedDataPoint> BluedDataManager;
 
 class BluedInputSource {
 
+
 public:
-    void startReading(const std::string& file_path, DefaultDataManager& mgr);
-    void startReading(const std::string& file_path, DefaultDataManager& mgr, std::function<void ()> callback);
-    void readWholeLocation(const std::string& directory, DefaultDataManager& mgr, std::function<void ()> callback);
-    void readWholeLocation(const std::string& directory, DefaultDataManager& mgr);
+    void startReading(const std::string& file_path, BluedDataManager& mgr);
+    void startReading(const std::string& file_path, BluedDataManager& mgr, std::function<void ()> callback);
+    void readWholeLocation(const std::string& directory, BluedDataManager& mgr, std::function<void ()> callback);
+    void readWholeLocation(const std::string& directory, BluedDataManager& mgr);
 
     void stopGracefully();
     void stopReading();
 
 
 private:
-    void run(const std::string& file_path, DefaultDataManager& mgr, std::function<void ()> callback);
-    void readFile(const std::string& file_path, DefaultDataManager& mgr);
-    void runLocations(std::vector<std::string> locations, DefaultDataManager& mgr, std::function<void ()> callback);
+    void run(const std::string& file_path, BluedDataManager& mgr, std::function<void ()> callback);
+    void readFile(const std::string& file_path, BluedDataManager& mgr);
+    void runLocations(std::vector<std::string> locations, BluedDataManager& mgr, std::function<void ()> callback);
 
-    static DataPoint matchLine(std::ifstream& input_stream);
+    static BluedDataPoint matchLine(std::ifstream& input_stream);
 
-    bool readOnce(std::ifstream& input_stream, DefaultDataManager & mgr);
+    bool readOnce(std::ifstream& input_stream, BluedDataManager & mgr);
 
     static bool skipToData(std::ifstream& input_stream);
 private:

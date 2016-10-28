@@ -5,11 +5,11 @@
 #include <vector>
 
 
-bool vec_is_sorted(const std::vector<DataPoint>& vec) {
-    DataPoint prev = vec.front();
-    prev.volts -= 1.0;
+bool vec_is_sorted(const std::vector<int>& vec) {
+    int prev = vec.front();
+    --prev;
     for(auto& dp: vec) {
-        if(prev.volts > dp.volts || prev.volts + 1.5 < dp.volts) {
+        if(prev + 1 != dp) {
             return false;
         }
         prev = dp;

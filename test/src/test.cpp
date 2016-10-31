@@ -18,6 +18,8 @@
 #include "PowerMeterData.h"
 #include "BluedInputSource.h"
 #include "BluedHdf5Converter.h"
+#include "BluedHdf5InputSource.h"
+
 
 void fucker() {
     using namespace std;
@@ -73,33 +75,18 @@ BOOST_AUTO_TEST_CASE(test_read_write_sorted) {
 }
 
 BOOST_AUTO_TEST_CASE(test_blued_data_source) {
-    BluedDataManager data_mgr;
     BluedInputSource source;
-    source.readWholeLocation("test_convert", data_mgr);
+    source.startReading("location_001_dataset_001/location_001_ivdata_001.txt/data", [](){});
+    const int buffer_size = 240;
+    BluedDataPoint buffer [buffer_size];
+    const int num_data_points_tested = 12000*60;
+    clock_t start = clock();
 
-
-    std::vector<BluedDataPoint> counter;
-
-    int elements_read = 0;
-    int total_elements_read = 0;
-    const int want_to_read = 1000;
-    data_mgr.setQueueMaxSize(want_to_read * 2);
-
-
-    do {
-        counter.resize(counter.size() + want_to_read);
-        auto write_pos = counter.begin() + total_elements_read;
-
-
-        auto elements_end_iter = data_mgr.popDataPoints(write_pos, counter.end());
-        elements_read = elements_end_iter - write_pos;
-        total_elements_read += elements_read;
-
-    } while (elements_read);
-    counter.resize(total_elements_read);
-
-    source.stopGracefully();
-    BOOST_TEST_MESSAGE("Elements Read: " << counter.size());
+    for(int i= 0; i<num_data_points_tested /buffer_size; ++i) {
+        source.data_manager.popDataPoints(buffer, buffer + buffer_size);
+    }
+    double time = (double) (clock() - start) / ((double) CLOCKS_PER_SEC);
+    BOOST_TEST_MESSAGE("Time taken with csv: " << time);
 
 }
 
@@ -109,8 +96,23 @@ BOOST_AUTO_TEST_CASE(test_convert_file) {
     converter.convertToHdf5("test_convert", "out.hdf5");
 }
 
-
+/* // Takes very long
 BOOST_AUTO_TEST_CASE(test_convert_mutch) {
     BluedHdf5Converter converter;
     converter.convertToHdf5("/home/jan/Downloads/location_001_dataset_001", "all_001.hdf5");
+}*/
+
+BOOST_AUTO_TEST_CASE(test_hdf5_input_source_test) {
+    BluedHdf5InputSource source;
+    source.startReading("all_001.hdf5", []() {});
+    const int buffer_size = 240;
+    BluedDataPoint buffer [buffer_size];
+    const int num_data_points_tested = 12000*60*60;
+    clock_t start = clock();
+
+    for(int i= 0; i<num_data_points_tested / buffer_size; ++i) {
+        source.data_manager.popDataPoints(buffer, buffer+buffer_size);
+    }
+    double time = (double) (clock() - start) / ((double) CLOCKS_PER_SEC);
+    BOOST_TEST_MESSAGE("Time taken with hdf5: " << time);
 }

@@ -6,13 +6,12 @@
 using namespace H5;
 
 void BluedHdf5Converter::convertToHdf5(const std::string &input_file, const std::string &output_file) {
-    BluedDataManager mgr;
     BluedInputSource input;
-    input.readWholeLocation(input_file, mgr);
+    input.readWholeLocation(input_file);
 
     try {
         this->createNewDataSpace(output_file);
-        this->writeData(mgr);
+        this->writeData(input.data_manager);
     } catch (...) {
 
     }
@@ -35,7 +34,7 @@ void BluedHdf5Converter::writeData(BluedDataManager &mgr) {
         }
         hsize_t size[2] = {offset[0] + buffer_len, this->dims[1]};
         dataset.extend(size);
-        hsize_t hyper_slab_dimensions[2] = {buffer_len, ndims};
+        hsize_t hyper_slab_dimensions[2] = {buffer_len, this->dims[1]};
         DataSpace mspace(rank, hyper_slab_dimensions);
 
 
@@ -63,7 +62,7 @@ void BluedHdf5Converter::createNewDataSpace(const std::string &output_file) {
     DataType datatype(PredType::NATIVE_FLOAT);
 
 
-    hsize_t max_dims[ndims] = {H5S_UNLIMITED, ncols};
+    hsize_t max_dims[rank] = {H5S_UNLIMITED, ncols};
 
     this->file_data_space = DataSpace(rank, this->dims, max_dims);
     DSetCreatPropList cparms;

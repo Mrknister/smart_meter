@@ -5,22 +5,21 @@
 #include <iostream>
 #include <boost/filesystem.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <algorithm>
 
-void BluedInputSource::startReading(const std::string &file_path, BluedDataManager &mgr) {
-    this->startReading(file_path, mgr, []() {});
+void BluedInputSource::startReading(const std::string &file_path) {
+    this->startReading(file_path, []() {});
 }
 
 
 void
-BluedInputSource::startReading(const std::string &file_path, BluedDataManager &mgr, std::function<void()> callback) {
+BluedInputSource::startReading(const std::string &file_path, std::function<void()> callback) {
     this->continue_reading = true;
-    auto runner_function = std::bind(&BluedInputSource::run, this, file_path, std::ref(mgr), callback);
+    auto runner_function = std::bind(&BluedInputSource::run, this, file_path, callback);
     this->runner = std::thread(runner_function);
 }
 
-void BluedInputSource::readWholeLocation(const std::string &directory, BluedDataManager &mgr) {
-    this->readWholeLocation(directory, mgr, []() {});
+void BluedInputSource::readWholeLocation(const std::string &directory) {
+    this->readWholeLocation(directory, []() {});
 }
 
 void BluedInputSource::stopGracefully() {
@@ -30,12 +29,13 @@ void BluedInputSource::stopGracefully() {
     }
 }
 
-void BluedInputSource::stopReading() {
+void BluedInputSource::stopNow() {
     this->continue_reading = false;
+    this->data_manager.discardRestOfStream();
 
 }
 
-void BluedInputSource::readWholeLocation(const std::string &directory, BluedDataManager &mgr,
+void BluedInputSource::readWholeLocation(const std::string &directory,
                                          std::function<void()> callback) {
     using namespace boost::filesystem;
     path p(directory);
@@ -58,28 +58,28 @@ void BluedInputSource::readWholeLocation(const std::string &directory, BluedData
     std::sort(locations.begin(), locations.end());
 
     this->continue_reading = true;
-    auto runner_function = std::bind(&BluedInputSource::runLocations, this, locations, std::ref(mgr), callback);
+    auto runner_function = std::bind(&BluedInputSource::runLocations, this, locations,callback);
     this->runner = std::thread(runner_function);
 }
 
-void BluedInputSource::runLocations(std::vector<std::string> locations, BluedDataManager &mgr,
+void BluedInputSource::runLocations(std::vector<std::string> locations,
                                     std::function<void()> callback) {
-    mgr.startStreaming();
+    this->data_manager.startStreaming();
     for (auto &file_path : locations) {
         if (!this->continue_reading) {
             break;
         }
-        readFile(file_path, mgr);
+        readFile(file_path);
     }
-    mgr.notifyStreamEnd();
+    this->data_manager.notifyStreamEnd();
     callback();
 }
 
 
-void BluedInputSource::run(const std::string &file_path, BluedDataManager &mgr, std::function<void()> callback) {
-    mgr.startStreaming();
-    readFile(file_path, mgr);
-    mgr.notifyStreamEnd();
+void BluedInputSource::run(const std::string &file_path, std::function<void()> callback) {
+    this->data_manager.startStreaming();
+    readFile(file_path);
+    this->data_manager.notifyStreamEnd();
     callback();
 }
 
@@ -88,13 +88,19 @@ BluedDataPoint BluedInputSource::matchLine(std::ifstream &input_stream) {
 
     // read csv values
     // ignore time
+
+    float x_value;
+    input_stream >> x_value;
     input_stream.ignore(50, ',');
 
     float current_a;
     input_stream >> current_a;
     input_stream.ignore(50, ',');
 
-    //ignore current b 
+    //ignore current b
+    float current_b;
+    input_stream >> current_b;
+
     input_stream.ignore(50, ',');
 
     float voltage_a;
@@ -103,12 +109,12 @@ BluedDataPoint BluedInputSource::matchLine(std::ifstream &input_stream) {
     // skip to next line
     input_stream.ignore(50, '\r');
 
-    return BluedDataPoint(0, current_a, 0 ,voltage_a);
+    return BluedDataPoint(x_value, current_a, current_b ,voltage_a);
 }
 
-bool BluedInputSource::readOnce(std::ifstream &input_stream, BluedDataManager &mgr) {
+bool BluedInputSource::readOnce(std::ifstream &input_stream) {
     const unsigned int buffer_size = 10000;
-    static BluedDataPoint buffer[buffer_size];
+    BluedDataPoint buffer[buffer_size];
     bool success = true;
     unsigned int i = 0;
     for (; i < buffer_size; ++i) {
@@ -120,7 +126,7 @@ bool BluedInputSource::readOnce(std::ifstream &input_stream, BluedDataManager &m
         }
         buffer[i] = BluedInputSource::matchLine(input_stream);
     }
-    mgr.addDataPoints(buffer, buffer + i);
+    this->data_manager.addDataPoints(buffer, buffer + i);
     return success;
 }
 
@@ -136,7 +142,7 @@ bool BluedInputSource::skipToData(std::ifstream &input_stream) {
     return false;
 }
 
-void BluedInputSource::readFile(const std::string &file_path, BluedDataManager &mgr) {
+void BluedInputSource::readFile(const std::string &file_path) {
     std::ifstream input_stream;
     input_stream.open(file_path, std::ifstream::in);
 
@@ -145,7 +151,7 @@ void BluedInputSource::readFile(const std::string &file_path, BluedDataManager &
 
         throw std::exception();
     }
-    while (readOnce(input_stream, mgr)) {
+    while (readOnce(input_stream)) {
         // do nothing
     }
 }

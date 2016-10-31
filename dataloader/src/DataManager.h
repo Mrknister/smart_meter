@@ -76,9 +76,7 @@ public:
      * @param data_point The datapoint that is to be added.
      *
      */
-    template<typename IteratorType>
-
-    void addDataPoints(IteratorType begin, IteratorType end);
+    template<typename IteratorType> void addDataPoints(IteratorType begin, IteratorType end);
 
 
     /**
@@ -90,6 +88,13 @@ public:
     void unblockAllReadOperations();
 
     void notifyStreamEnd();
+
+    void discardRestOfStream() {
+        std::unique_lock<std::mutex> lock(data_queue_mutex);
+        this->data_queue.clear();
+        this->discard_rest_of_stream = true;
+        this->deque_overflow.notify_all();
+    }
 
 
 private:
@@ -106,7 +111,9 @@ private:
     std::mutex data_queue_mutex;
     std::deque<DataPointType> data_queue;
     bool stream_ended = false;
-    unsigned long queue_max_size = 1024;
+    bool discard_rest_of_stream = false;
+
+    unsigned long queue_max_size = 4096;
 };
 
 
@@ -125,7 +132,7 @@ template<typename DataPointType> unsigned long DataManager<DataPointType>::getQu
 template<typename DataPointType> unsigned long DataManager<DataPointType>::getQueueSize() {
     std::unique_lock<std::mutex> queue_lock(this->data_queue_mutex);
 
-    return this->data_queue->size();
+    return this->data_queue.size();
 }
 
 template<typename DataPointType> void DataManager<DataPointType>::setQueueMaxSize(unsigned long max_size) {
@@ -139,7 +146,7 @@ template<typename DataPointType> template<typename IteratorType> void
 DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end) {
     auto waiting_function = this->getQueueNotFullWaiter();
 
-    while (begin != end) {
+    while (begin != end && !this->discard_rest_of_stream) {
         std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
         this->deque_overflow.wait(deque_overflow_wait_lock, waiting_function);
         long pushable_elements = this->queue_max_size - this->data_queue.size();
@@ -203,7 +210,7 @@ template<typename DataPointType> std::function<bool()> DataManager<DataPointType
 
 template<typename DataPointType> std::function<bool()> DataManager<DataPointType>::getQueueNotFullWaiter() {
     return [this]() -> bool {
-        return this->data_queue.size() < this->queue_max_size;
+        return this->data_queue.size() < this->queue_max_size || this->discard_rest_of_stream;
     };
 }
 
@@ -213,7 +220,6 @@ template<typename DataPointType> void DataManager<DataPointType>::notifyStreamEn
 }
 
 template<typename DataPointType>
-
 template<class IteratorType> IteratorType
 DataManager<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) {
     auto waiting_function = this->getQueueNotEmptyWaiter();
@@ -229,6 +235,11 @@ DataManager<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) 
 
     } while (begin != end && !this->stream_ended);
     return begin;
+}
+
+template<typename DataPointType>
+void DataManager<DataPointType>::unblockAllReadOperations() {
+
 }
 
 

@@ -28,6 +28,7 @@ set(DATALOADER_SRCS
         src/DataPoint.h
         src/PowerMeterData.cpp
         src/PowerMeterData.h
+        src/BluedToDefaultDataManagerAdapter.h
         ${INIH_SOURCES}
 )
 

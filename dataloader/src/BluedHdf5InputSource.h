@@ -10,12 +10,10 @@
 
 class BluedHdf5InputSource {
 public:
+    void startReading(const std::string &file_path);
     void startReading(const std::string &file_path, std::function<void()> callback);
 
-    void stopNow() {
-        this->continue_reading = false;
-        this->data_manager.discardRestOfStream();
-    }
+    void stopNow();
 
     void stopGracefully();
 

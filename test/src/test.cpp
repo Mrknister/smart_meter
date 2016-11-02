@@ -11,6 +11,8 @@
 #include <chrono>
 #include <atomic>
 #include <boost/range/counting_range.hpp>
+#include <cstring>
+
 
 #define private public
 
@@ -76,13 +78,13 @@ BOOST_AUTO_TEST_CASE(test_read_write_sorted) {
 
 BOOST_AUTO_TEST_CASE(test_blued_data_source) {
     BluedInputSource source;
-    source.startReading("location_001_dataset_001/location_001_ivdata_001.txt/data", [](){});
+    source.startReading("location_001_dataset_001/location_001_ivdata_001.txt/data", []() {});
     const int buffer_size = 240;
-    BluedDataPoint buffer [buffer_size];
-    const int num_data_points_tested = 12000*60;
+    BluedDataPoint buffer[buffer_size];
+    const int num_data_points_tested = 12000 * 60;
     clock_t start = clock();
 
-    for(int i= 0; i<num_data_points_tested /buffer_size; ++i) {
+    for (int i = 0; i < num_data_points_tested / buffer_size; ++i) {
         source.data_manager.popDataPoints(buffer, buffer + buffer_size);
     }
     double time = (double) (clock() - start) / ((double) CLOCKS_PER_SEC);
@@ -106,13 +108,36 @@ BOOST_AUTO_TEST_CASE(test_hdf5_input_source_test) {
     BluedHdf5InputSource source;
     source.startReading("all_001.hdf5", []() {});
     const int buffer_size = 240;
-    BluedDataPoint buffer [buffer_size];
-    const int num_data_points_tested = 12000*60*60;
+    BluedDataPoint buffer[buffer_size];
+    const int num_data_points_tested = 12000 * 60 * 60;
     clock_t start = clock();
 
-    for(int i= 0; i<num_data_points_tested / buffer_size; ++i) {
-        source.data_manager.popDataPoints(buffer, buffer+buffer_size);
+    for (int i = 0; i < num_data_points_tested / buffer_size; ++i) {
+        source.data_manager.popDataPoints(buffer, buffer + buffer_size);
     }
     double time = (double) (clock() - start) / ((double) CLOCKS_PER_SEC);
     BOOST_TEST_MESSAGE("Time taken with hdf5: " << time);
+}
+
+BOOST_AUTO_TEST_CASE(test_hdf5_csv_equality) {
+    BluedHdf5InputSource source;
+    source.startReading("all_001.hdf5", []() {});
+
+    BluedInputSource csv_source;
+    csv_source.readWholeLocation("/home/jan/Downloads/location_001_dataset_001");
+    const int buffer_size = 240;
+    BluedDataPoint buffer1[buffer_size];
+    BluedDataPoint buffer2[buffer_size];
+
+    const int num_data_points_tested = 12000 * 60 * 3;
+
+    for (int i = 0; i < num_data_points_tested / buffer_size; ++i) {
+        source.data_manager.popDataPoints(buffer1, buffer1 + buffer_size);
+        csv_source.data_manager.popDataPoints(buffer2, buffer2 + buffer_size);
+        bool buffers_equal = memcmp(buffer1, buffer2, sizeof(BluedDataPoint) * buffer_size) == 0;
+        BOOST_TEST(buffers_equal);
+    }
+    BOOST_TEST_MESSAGE("total data points compared: " << (num_data_points_tested / buffer_size -1) * buffer_size);
+
+
 }

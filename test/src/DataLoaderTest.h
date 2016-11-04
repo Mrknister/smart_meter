@@ -1,7 +1,7 @@
 #ifndef _TEST_H_
 #define _TEST_H_
 
-#include "DataPoint.h"
+#include "DefaultDataPoint.h"
 #include <vector>
 
 

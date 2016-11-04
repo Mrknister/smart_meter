@@ -1,16 +1,18 @@
-cmake_minimum_required(VERSION 2.6)
-project (analyze)
+cmake_minimum_required(VERSION 2.8)
+project (libanalyze)
 
 
-set (PROJECT_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src)
-set (PROJECT_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
-FILE(GLOB_RECURSE ANALYZE_SOURCES "${PROJECT_SOURCE_DIR}/*.cpp")
+set (libanalyze_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src)
 
+set (ANALYZE_SOURCES
+        src/Algorithms.h
+        )
 
 
 add_library(${PROJECT_NAME} ${ANALYZE_SOURCES})
-target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_INCLUDE_DIR}")
+target_include_directories(${PROJECT_NAME} PUBLIC ${libanalyze_INCLUDE_DIR})
 target_include_directories(${PROJECT_NAME} PUBLIC "${PROJECT_BINARY_DIR}")
+set_target_properties(${PROJECT_NAME}  PROPERTIES LINKER_LANGUAGE CXX)
 
 
 # add kiss_fft

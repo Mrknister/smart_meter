@@ -25,9 +25,9 @@ set(DATALOADER_SRCS
         src/BluedInputSource.cpp
         src/BluedInputSource.h
         src/DataManager.h
-        src/DataPoint.h
-        src/PowerMeterData.cpp
-        src/PowerMeterData.h
+        src/DefaultDataPoint.h
+        src/PowerMetaData.cpp
+        src/PowerMetaData.h
         src/BluedToDefaultDataManagerAdapter.h
         ${INIH_SOURCES}
 )

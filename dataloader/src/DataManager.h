@@ -9,8 +9,8 @@
 #include <algorithm>
 
 
-#include "DataPoint.h"
-#include "PowerMeterData.h"
+#include "DefaultDataPoint.h"
+#include "PowerMetaData.h"
 
 /**
  * @brief The DataManager is a synchronized point for asynchronous reading and writing operations.
@@ -18,7 +18,7 @@
  */
 template<typename DataPointType> class DataManager;
 
-typedef DataManager<DataPoint> DefaultDataManager;
+typedef DataManager<DefaultDataPoint> DefaultDataManager;
 
 template<typename DataPointType> class DataManager {
 public:
@@ -30,7 +30,7 @@ public:
 
     unsigned long getQueueSize();
 
-    void startStreaming() {
+    void restartStreaming() {
         this->stream_ended = false;
     }
 
@@ -73,7 +73,8 @@ public:
     /**
      * @brief Adds multiple data points to the queue.
      *
-     * @param data_point The datapoint that is to be added.
+     * @param begin Starting iterator
+     * @param end Iterator past the end of the buffer
      *
      */
     template<typename IteratorType> void addDataPoints(IteratorType begin, IteratorType end);
@@ -82,17 +83,13 @@ public:
     /**
      * @brief Unblocks calls to getDataPoints and nextData by safely returning the data already read for the former and removing the maximum possible amount of data for the latter.
      *
-     * @param data_point The datapoint that is to be added.
-     *
      */
-    void unblockAllReadOperations();
-
     void notifyStreamEnd();
 
     void discardRestOfStream() {
         std::unique_lock<std::mutex> lock(data_queue_mutex);
         this->data_queue.clear();
-        this->discard_rest_of_stream = true;
+        this->stream_ended = true;
         this->deque_overflow.notify_all();
     }
 
@@ -111,7 +108,6 @@ private:
     std::mutex data_queue_mutex;
     std::deque<DataPointType> data_queue;
     bool stream_ended = false;
-    bool discard_rest_of_stream = false;
 
     unsigned long queue_max_size = 4096;
 };
@@ -146,7 +142,7 @@ template<typename DataPointType> template<typename IteratorType> void
 DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end) {
     auto waiting_function = this->getQueueNotFullWaiter();
 
-    while (begin != end && !this->discard_rest_of_stream) {
+    while (begin != end && !this->stream_ended) {
         std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
         this->deque_overflow.wait(deque_overflow_wait_lock, waiting_function);
         long pushable_elements = this->queue_max_size - this->data_queue.size();
@@ -198,19 +194,19 @@ template<typename DataPointType> void DataManager<DataPointType>::addDataPoint(D
 template<typename DataPointType> std::function<bool()>
 DataManager<DataPointType>::getQueueHasEnoughElementsWaiter(unsigned int num_elements) {
     return [this, num_elements]() -> bool {
-        return this->data_queue.size() >= num_elements || this->stream_ended;
+        return this->data_queue.size() >= num_elements || this->stream_ended || this->discard_rest_of_stream;
     };
 }
 
 template<typename DataPointType> std::function<bool()> DataManager<DataPointType>::getQueueNotEmptyWaiter() {
     return [this]() -> bool {
-        return this->data_queue.size() > 0 || this->stream_ended;
+        return this->data_queue.size() > 0 || this->stream_ended ;
     };
 }
 
 template<typename DataPointType> std::function<bool()> DataManager<DataPointType>::getQueueNotFullWaiter() {
     return [this]() -> bool {
-        return this->data_queue.size() < this->queue_max_size || this->discard_rest_of_stream;
+        return this->data_queue.size() < this->queue_max_size || this->stream_ended;
     };
 }
 
@@ -233,14 +229,10 @@ DataManager<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) 
         this->data_queue.erase(data_queue.begin(), data_queue.begin() + elements_pulled);
         this->deque_overflow.notify_one();
 
-    } while (begin != end && !this->stream_ended);
+    } while (begin != end && !this->stream_ended );
     return begin;
 }
 
-template<typename DataPointType>
-void DataManager<DataPointType>::unblockAllReadOperations() {
-
-}
 
 
 #endif // _DATAMANAGER_H_

@@ -7,6 +7,7 @@ set(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 include(${CMAKE_SOURCE_DIR}/cmake/Scripts/AddDoxygenTarget.cmake)
 add_doxygen_target("event_detector_doc")
+find_package(Boost COMPONENTS system filesystem date_time REQUIRED)
 
 
 include_directories(${event_detector_INCLUDE_DIR})
@@ -22,8 +23,15 @@ add_executable(${PROJECT_NAME}
         src/main.cpp
 
         )
-target_link_libraries(${PROJECT_NAME} analyze)
+target_link_libraries(${PROJECT_NAME} libanalyze)
 target_link_libraries(${PROJECT_NAME} dataloader)
+target_link_libraries(${PROJECT_NAME}
+        ${Boost_LIBRARIES}
+        )
+target_include_directories(${PROJECT_NAME}
+        PUBLIC
+        ${Boost_INCLUDE_DIRS}
+        )
 
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

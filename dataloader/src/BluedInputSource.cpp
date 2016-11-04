@@ -64,7 +64,7 @@ void BluedInputSource::readWholeLocation(const std::string &directory,
 
 void BluedInputSource::runLocations(std::vector<std::string> locations,
                                     std::function<void()> callback) {
-    this->data_manager.startStreaming();
+    this->data_manager.restartStreaming();
     for (auto &file_path : locations) {
         if (!this->continue_reading) {
             break;
@@ -77,7 +77,7 @@ void BluedInputSource::runLocations(std::vector<std::string> locations,
 
 
 void BluedInputSource::run(const std::string &file_path, std::function<void()> callback) {
-    this->data_manager.startStreaming();
+    this->data_manager.restartStreaming();
     readFile(file_path);
     this->data_manager.notifyStreamEnd();
     callback();
@@ -85,10 +85,7 @@ void BluedInputSource::run(const std::string &file_path, std::function<void()> c
 
 BluedDataPoint BluedInputSource::matchLine(std::ifstream &input_stream) {
     std::string line;
-
-    // read csv values
-    // ignore time
-
+    
     float x_value;
     input_stream >> x_value;
     input_stream.ignore(50, ',');
@@ -107,7 +104,7 @@ BluedDataPoint BluedInputSource::matchLine(std::ifstream &input_stream) {
     input_stream >> voltage_a;
 
     // skip to next line
-    input_stream.ignore(50, '\r');
+    input_stream.ignore(50, '\n');
 
     return BluedDataPoint(x_value, current_a, current_b ,voltage_a);
 }
@@ -119,7 +116,7 @@ bool BluedInputSource::readOnce(std::ifstream &input_stream) {
     unsigned int i = 0;
     for (; i < buffer_size; ++i) {
         if (!(input_stream.good() && this->continue_reading)) {
-            i -= 1;
+            --i;
             success = false;
             break;
 

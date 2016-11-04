@@ -28,7 +28,7 @@ void BluedHdf5Converter::writeData(BluedDataManager &mgr) {
     int count = 0;
     while (true) {
         BluedDataPoint *buffer_end = mgr.popDataPoints(buffer, &buffer[buffer_size]);
-        hsize_t buffer_len = buffer_end - buffer;
+        hsize_t buffer_len =static_cast<hsize_t>(buffer_end - buffer);
         if (buffer_len == 0) {
             break;
         }
@@ -41,7 +41,7 @@ void BluedHdf5Converter::writeData(BluedDataManager &mgr) {
         DataSpace fspace = dataset.getSpace();
 
         fspace.selectHyperslab(H5S_SELECT_SET, hyper_slab_dimensions, offset);
-        dataset.write((void *) buffer, PredType::NATIVE_FLOAT, mspace, fspace);
+        dataset.write(reinterpret_cast<const void*>(buffer), PredType::NATIVE_FLOAT, mspace, fspace);
         offset[0] += buffer_len;
         ++count;
         if(count % 1000 == 0) {

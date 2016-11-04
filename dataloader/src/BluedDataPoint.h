@@ -9,7 +9,7 @@
 struct BluedDataPoint {
     typedef float datum;
 
-    constexpr BluedDataPoint(float x_value, float current_a, float current_b, float voltage_a) : x_value(x_value), current_a(current_a), current_b(current_b), voltage_a(voltage_a) {}
+    constexpr BluedDataPoint(float _x_value, float _current_a, float _current_b, float _voltage_a) : x_value(_x_value), current_a(_current_a), current_b(_current_b), voltage_a(_voltage_a) {}
 
     constexpr BluedDataPoint() : x_value(0), current_a(0), current_b(0), voltage_a(0) {}
 

@@ -23,6 +23,8 @@
 
 BOOST_AUTO_TEST_SUITE(data_loader_suite)
 
+    void createDataSet(std::string base_dir,const int data_set_num, const int num_data_points_per_set);
+
 
     BOOST_AUTO_TEST_CASE(test_read_write_sorted) {
         using namespace std;
@@ -63,7 +65,7 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
         counter.resize(total_elements_read);
 
 
-        double time = (double) (clock() - start) / ((double) CLOCKS_PER_SEC);
+        double time = static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
         BOOST_TEST_MESSAGE("Time taken: " << time);
 
         BOOST_TEST(vec_is_sorted(counter));
@@ -85,7 +87,7 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
         for (int i = 0; i < num_data_points_tested / buffer_size; ++i) {
             source.data_manager.popDataPoints(buffer, buffer + buffer_size);
         }
-        double time = (double) (clock() - start) / ((double) CLOCKS_PER_SEC);
+        double time = static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
         BOOST_TEST_MESSAGE("Time taken with csv: " << time);
 
     }
@@ -112,7 +114,7 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
         for (int i = 0; i < num_data_points_tested / buffer_size; ++i) {
             source.data_manager.popDataPoints(buffer, buffer + buffer_size);
         }
-        double time = (double) (clock() - start) / ((double) CLOCKS_PER_SEC);
+        double time = static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
         BOOST_TEST_MESSAGE("Time taken with hdf5: " << time);
     }
 
@@ -137,17 +139,18 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
         BOOST_TEST_MESSAGE("total data points compared: " << (num_data_points_tested / buffer_size - 1) * buffer_size);
     }
 
-    void createDataSet(std::string base_dir,const int data_set_num, const int num_data_points_per_set) {
+    void createDataSet(std::string base_dir, const int data_set_num, const int num_data_points_per_set) {
         const int base_data_point_number = data_set_num * num_data_points_per_set;
-        std::string dir_name = base_dir+std::to_string(data_set_num) + ".txt";
+        std::string dir_name = base_dir + std::to_string(data_set_num) + ".txt";
         boost::filesystem::create_directories(dir_name);
 
         std::ofstream data_set(dir_name + "/data");
-        data_set <<
-                "X_Value,Current A,Current B,VoltageA,Comment\r\n";
+        data_set << "X_Value,Current A,Current B,VoltageA,Comment\r\n";
         for (int i = 0; i < num_data_points_per_set; ++i) {
-            data_set << ((float) base_data_point_number + i) +0.1 << "," << ((float) base_data_point_number + i) +0.1  << ","
-                     << ((float) base_data_point_number + i) +0.1  << "," << ((float) base_data_point_number + i) +0.1  << "\r\n";
+            data_set << static_cast<float>(base_data_point_number + i) + 0.1 << ","
+                     << static_cast<float>(base_data_point_number + i) + 0.1 << ","
+                     << static_cast<float>( base_data_point_number + i) + 0.1 << ","
+                     << static_cast<float>( base_data_point_number + i) + 0.1 << "\r\n";
         }
         data_set.close();
     }
@@ -155,20 +158,21 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
     BOOST_AUTO_TEST_CASE(test_read_whole_location) {
         const int num_data_sets = 9;
         const int data_points_per_set = 100;
-        const int buffer_size = num_data_sets*data_points_per_set + 10;
+        const int buffer_size = num_data_sets * data_points_per_set + 10;
         BluedDataPoint buffer[buffer_size];
         std::string test_dir("location_test/");
         for (int i = 0; i < num_data_sets; ++i) {
-            createDataSet(test_dir,i, data_points_per_set);
+            createDataSet(test_dir, i, data_points_per_set);
         }
         BluedInputSource source;
         source.readWholeLocation(test_dir);
 
-        BluedDataPoint *buffer_end = source.data_manager.popDataPoints(buffer, buffer+buffer_size);
-        BOOST_TEST(buffer_end == buffer + num_data_sets*data_points_per_set );
-        for(int i = 0; i < num_data_sets*data_points_per_set; ++i) {
-            BOOST_TEST(((int)buffer[i].voltage_a) == i);
+        BluedDataPoint *buffer_end = source.data_manager.popDataPoints(buffer, buffer + buffer_size);
+        BOOST_TEST(buffer_end == buffer + num_data_sets * data_points_per_set);
+        for (int i = 0; i < num_data_sets * data_points_per_set; ++i) {
+            BOOST_TEST(static_cast<int>(buffer[i].voltage_a) == i);
         }
         boost::filesystem::remove_all(test_dir);
     }
+
 BOOST_AUTO_TEST_SUITE_END()

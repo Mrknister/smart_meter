@@ -1,6 +1,6 @@
 find_package(Boost REQUIRED COMPONENTS system filesystem unit_test_framework)
+
 include_directories(
-        ${TEST_SOURCE_DIR}/src
         ${Boost_INCLUDE_DIRS}
 )
 

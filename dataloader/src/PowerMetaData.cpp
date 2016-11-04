@@ -51,7 +51,7 @@ mapSetting(const char *expected_section, const char *expected_name, const char *
 
 static int handler(void *user, const char *section, const char *name, const char *value) {
     try {
-        PowerMetaData *calib = (PowerMetaData *) user;
+        PowerMetaData *calib = reinterpret_cast<PowerMetaData *> (user);
 
         bool success = mapSetting<float>("main", "scale_volts", section, name, value, calib->scale_volts);
         success |= mapSetting<float>("main", "scale_amps", section, name, value, calib->scale_amps);

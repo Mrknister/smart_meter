@@ -145,8 +145,8 @@ DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end) 
     while (begin != end && !this->stream_ended) {
         std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
         this->deque_overflow.wait(deque_overflow_wait_lock, waiting_function);
-        long pushable_elements = this->queue_max_size - this->data_queue.size();
-        long elements_pushed = std::min(end - begin, pushable_elements);
+        unsigned long pushable_elements = this->queue_max_size - this->data_queue.size();
+        unsigned long elements_pushed = std::min(static_cast<unsigned long>(end - begin), pushable_elements);
         this->data_queue.insert(data_queue.end(), begin, begin + elements_pushed);
         begin += elements_pushed;
         this->deque_underflow.notify_one();
@@ -223,8 +223,8 @@ DataManager<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) 
         std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
         this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
 
-        long pullable_elements = this->data_queue.size();
-        long elements_pulled = std::min(end - begin, pullable_elements);
+        unsigned long pullable_elements = this->data_queue.size();
+        unsigned long elements_pulled = std::min(end - begin, static_cast<long>(pullable_elements));
         begin = std::copy_n(data_queue.begin(), elements_pulled, begin);
         this->data_queue.erase(data_queue.begin(), data_queue.begin() + elements_pulled);
         this->deque_overflow.notify_one();

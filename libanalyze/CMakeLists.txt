@@ -17,8 +17,8 @@ set_target_properties(${PROJECT_NAME}  PROPERTIES LINKER_LANGUAGE CXX)
 
 # add kiss_fft
 add_library(kiss_fft ${EXTERNAL_DEPENDENCIES_DIR}/kiss_fft/kiss_fft.c)
-target_include_directories(kiss_fft PUBLIC ${EXTERNAL_DEPENDENCIES_DIR}/kiss_fft/ BEFORE)
-target_include_directories(${PROJECT_NAME}  PUBLIC ${EXTERNAL_DEPENDENCIES_DIR}/kiss_fft/ BEFORE)
+target_include_directories(kiss_fft PUBLIC ${EXTERNAL_DEPENDENCIES_DIR}/kiss_fft/)
+target_include_directories(${PROJECT_NAME}  PUBLIC ${EXTERNAL_DEPENDENCIES_DIR}/kiss_fft/)
 target_link_libraries(${PROJECT_NAME} PUBLIC kiss_fft)
 
 

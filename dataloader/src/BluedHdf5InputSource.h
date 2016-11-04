@@ -30,7 +30,7 @@ public:
 private:
     void run(const std::string &file_path, std::function<void()> callback);
 
-    bool readOnce(H5::H5File &file, H5::DataSet dataset, H5::DataSpace &dataspace);
+    bool readOnce(H5::DataSet dataset, H5::DataSpace &dataspace);
 
 private:
     bool continue_reading = true;

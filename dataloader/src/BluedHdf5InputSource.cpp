@@ -29,20 +29,20 @@ void BluedHdf5InputSource::run(const std::string &file_path, std::function<void(
     if (this->data_set_size[1] != this->fields) {
         throw std::exception();
     }
-    while (this->readOnce(file, dataset, dataspace)) {/** do nothing */}
+    while (this->continue_reading) {this->readOnce(dataset, dataspace);}
+    callback();
 
 }
 
 
-bool BluedHdf5InputSource::readOnce(H5::H5File &file, H5::DataSet dataset, H5::DataSpace &dataspace) {
+bool BluedHdf5InputSource::readOnce(H5::DataSet dataset, H5::DataSpace &dataspace) {
     if (!this->continue_reading) {
         return false;
     }
-    bool continue_reading = true;
     hsize_t read_count = this->buffer_size;
     if (this->buffer_size > this->data_set_size[0] - this->current_offset[0]) {
         read_count = this->data_set_size[0] - this->current_offset[0];
-        continue_reading = false;
+        this->continue_reading = false;
     }
     hsize_t count[2] = {read_count, this->data_set_size[1]};
     dataspace.selectHyperslab(H5S_SELECT_SET, count, current_offset);
@@ -54,7 +54,7 @@ bool BluedHdf5InputSource::readOnce(H5::H5File &file, H5::DataSet dataset, H5::D
 
     current_offset[0] += count[0];
 
-    return continue_reading;
+    return this->continue_reading;
 
 }
 

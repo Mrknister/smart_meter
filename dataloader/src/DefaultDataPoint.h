@@ -8,7 +8,7 @@
  * 
  */
 struct DefaultDataPoint {
-    DefaultDataPoint(float volts, float ampere): volts(volts) , ampere(ampere) {}
+    DefaultDataPoint(float volt_value, float ampere_value): volts(volt_value) , ampere(ampere_value) {}
     DefaultDataPoint(): volts(0) , ampere(0) {}
     DefaultDataPoint(const DefaultDataPoint& other) : volts(other.volts), ampere(other.ampere){}
 

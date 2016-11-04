@@ -18,7 +18,6 @@ private:
     static const int ncols = 4;
     static const int chunk_size = 240;
     hsize_t dims[rank] = {0, ncols};
-    hsize_t offset[2] = {0,0};
 
     
     H5::H5File file;

@@ -11,7 +11,7 @@
 #include "DefaultEventDetectionStrategy.h"
 
 
-template<class EventDetectionStrategyType = DefaultEventDetectionStrategy> class EventDetector {
+template<typename EventDetectionStrategyType = DefaultEventDetectionStrategy> class EventDetector {
 public:
     /**
      * @brief This function spawns a thread that reads data from a DefaultDataManager and detects events in it. If the thread is already running the program will wait until it has ended.
@@ -95,7 +95,7 @@ EventDetector<EventDetectionStrategyType>::startAnalyzing(DefaultDataManager *in
 
 template<class EventDetectionStrategyType> void EventDetector<EventDetectionStrategyType>::run() {
     DefaultDataPoint *buffer_prev_period = this->electrical_period_buffer1.get();
-    DefaultDataPoint *buffer_current_period = this->electrical_period_buffer1.get();
+    DefaultDataPoint *buffer_current_period = this->electrical_period_buffer2.get();
     this->readBuffer(buffer_prev_period);
     while (this->readBuffer(buffer_current_period) && this->continue_analyzing) {
         if (this->detectEvent(buffer_prev_period, buffer_current_period)) {
@@ -116,9 +116,9 @@ EventDetector<EventDetectionStrategyType>::readBuffer(DefaultDataPoint *data_poi
 template<class EventDetectionStrategyType> bool
 EventDetector<EventDetectionStrategyType>::detectEvent(DefaultDataPoint *prev_period,
                                                        DefaultDataPoint *current_period) {
-    if (this->event_detection_strategy) {
+    if (this->event_detection_strategy.detectEvent(prev_period, current_period, this->power_meta_data.dataPointsPerPeriod())) {
         std::cout << "time: " << this->getCurrentTime() << " = " << this->stream_start_time << " + "
-                  << this->getTimePassed().total_milliseconds() / 1000.f;
+                  << this->getTimePassed().total_milliseconds() / 1000.f << std::endl;
 
         return true;
 
@@ -147,8 +147,8 @@ EventDetector<EventDetectionStrategyType>::getTimePassed() {
     return boost::posix_time::seconds(periods_read) / this->power_meta_data.frequency;
 }
 
-template<class EventDetectionStrategyType> EventMetaData<EventDetectionStrategyType>::TimeType
-EventDetector::getCurrentTime() {
+template<class EventDetectionStrategyType> EventMetaData::TimeType
+EventDetector<EventDetectionStrategyType>::getCurrentTime() {
     return this->stream_start_time + this->getTimePassed();
 }
 

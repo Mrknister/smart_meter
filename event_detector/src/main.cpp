@@ -32,8 +32,8 @@ int main(int argc, char** argv)
     data_source.startReading("all_001.hdf5");
     std::thread adapter_thread(&adaptBluedToDefaultDataManager, &data_source.data_manager, &default_data_manager);
 
-    EventDetector detect;
-    detect.startAnalyzing(&default_data_manager,conf, boost::posix_time::time_from_string(conf.data_set_start_time));
+    EventDetector<DefaultEventDetectionStrategy> detect;
+    detect.startAnalyzing(&default_data_manager,conf,DefaultEventDetectionStrategy(), boost::posix_time::time_from_string(conf.data_set_start_time));
 
     adapter_thread.join();
     

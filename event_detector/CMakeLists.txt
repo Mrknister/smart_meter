@@ -18,9 +18,10 @@ add_executable(${PROJECT_NAME}
         src/EventDetector.h
         src/EventMetaData.cpp
         src/EventMetaData.h
-        src/EventStorage.cpp
         src/EventStorage.h
         src/main.cpp
+        src/DefaultEventDetectionStrategy.h
+        src/DefaultEventDetectionStrategy.cpp
 
         )
 target_link_libraries(${PROJECT_NAME} libanalyze)

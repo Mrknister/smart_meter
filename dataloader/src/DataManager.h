@@ -86,6 +86,13 @@ public:
      */
     void notifyStreamEnd();
 
+    /**
+     * @brief Does the same as notifyStreamEnd
+     */
+    void unblockReadOperations() {
+        this->notifyStreamEnd();
+    }
+
     void discardRestOfStream() {
         std::unique_lock<std::mutex> lock(data_queue_mutex);
         this->data_queue.clear();
@@ -194,7 +201,7 @@ template<typename DataPointType> void DataManager<DataPointType>::addDataPoint(D
 template<typename DataPointType> std::function<bool()>
 DataManager<DataPointType>::getQueueHasEnoughElementsWaiter(unsigned int num_elements) {
     return [this, num_elements]() -> bool {
-        return this->data_queue.size() >= num_elements || this->stream_ended || this->discard_rest_of_stream;
+        return this->data_queue.size() >= num_elements || this->stream_ended ;
     };
 }
 

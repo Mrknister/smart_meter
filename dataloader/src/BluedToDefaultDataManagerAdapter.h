@@ -8,6 +8,7 @@
 #include "BluedDefinitions.h"
 #include "DefaultDataPoint.h"
 
+void adaptBluedToDefaultDataManager(BluedDataManager* blued_data_mgr, DefaultDataManager* default_data_mgr);
 
 void adaptBluedToDefaultDataManager(BluedDataManager* blued_data_mgr, DefaultDataManager* default_data_mgr) {
     const int buffer_size = 1000;

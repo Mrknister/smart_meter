@@ -35,9 +35,12 @@ set(DATALOADER_SRCS
 
 find_package(SndFile REQUIRED)
 find_package(Boost COMPONENTS system filesystem date_time REQUIRED)
+find_package(HDF5 COMPONENTS CXX REQUIRED)
 
-include(/usr/local/HDF_Group/HDF5/1.10.0/share/cmake/hdf5-config.cmake)
-
+#include(/usr/local/HDF_Group/HDF5/1.10.0/share/cmake/hdf5-config.cmake)
+#set (HDF5_LIBRARIES /usr/local/HDF_Group/HDF5/1.10.0/lib/libhdf5_cpp_debug.a /usr/local/HDF_Group/HDF5/1.10.0/lib/libhdf5_debug.a
+#    -ldl
+#    )
 add_library(${PROJECT_NAME} ${DATALOADER_SRCS} ${INIH_SOURCES})
 
 target_include_directories(${PROJECT_NAME}
@@ -47,10 +50,7 @@ target_include_directories(${PROJECT_NAME}
     ${SNDFILE_INCLUDE_DIR}
     ${HDF5_INCLUDE_DIR_CPP}
     )
-set (HDF5_LIBRARIES /usr/local/HDF_Group/HDF5/1.10.0/lib/libhdf5_cpp_debug.a /usr/local/HDF_Group/HDF5/1.10.0/lib/libhdf5_debug.a
 
-    -ldl
-    )
 
 target_link_libraries(${PROJECT_NAME} -lm -lpthread)
 target_link_libraries(${PROJECT_NAME}

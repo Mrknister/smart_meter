@@ -16,6 +16,7 @@ add_library(event_detection_lib STATIC
     src/EventMetaData.h
     src/EventStorage.h
     src/DefaultEventDetectionStrategy.h
+    src/dummy.cpp
     )
 
 target_link_libraries(event_detection_lib libanalyze)

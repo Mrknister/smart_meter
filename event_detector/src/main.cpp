@@ -8,7 +8,6 @@
 #include "BluedToDefaultDataManagerAdapter.h"
 #include "EventDetector.h"
 #include "FastFourierTransformCalculator.h"
-#include <mcheck.h>
 
 int main(int argc, char **argv) {
 

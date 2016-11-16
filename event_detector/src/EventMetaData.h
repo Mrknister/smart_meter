@@ -2,10 +2,11 @@
 #define EVENTMETADATA_H
 
 #include <boost/date_time.hpp>
+#include "DynamicStreamMetaData.h"
 
 struct EventMetaData
 {
-    typedef boost::posix_time::ptime TimeType;
+    typedef DynamicStreamMetaData::TimeType TimeType;
     TimeType event_time;
     EventMetaData(){};
     EventMetaData( TimeType time):event_time(time){}

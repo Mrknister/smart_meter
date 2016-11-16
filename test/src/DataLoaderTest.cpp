@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
         BluedHdf5Converter converter;
         converter.convertToHdf5("test_convert", "out.hdf5");
     }
-
+/*
     BOOST_AUTO_TEST_CASE(test_convert_mutch) {
         BluedHdf5Converter converter;
         converter.convertToHdf5("/home/jan/Downloads/location_001_dataset_001", "all_001.hdf5");
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
             BOOST_TEST(buffers_equal);
         }
         BOOST_TEST_MESSAGE("total data points compared: " << (num_data_points_tested / buffer_size - 1) * buffer_size);
-    }
+    }*/
 
     void createDataSet(std::string base_dir, const int data_set_num, const int num_data_points_per_set) {
         const int base_data_point_number = data_set_num * num_data_points_per_set;

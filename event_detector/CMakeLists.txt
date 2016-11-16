@@ -10,26 +10,30 @@ add_doxygen_target("event_detector_doc")
 find_package(Boost COMPONENTS system filesystem date_time REQUIRED)
 
 
-include_directories(${event_detector_INCLUDE_DIR})
 
+add_library(event_detection_lib STATIC
+    src/EventDetector.h
+    src/EventMetaData.h
+    src/EventStorage.h
+    src/DefaultEventDetectionStrategy.h
+    )
+
+target_link_libraries(event_detection_lib libanalyze)
+target_link_libraries(event_detection_lib dataloader)
+target_link_libraries(event_detection_lib
+    ${Boost_LIBRARIES}
+    )
+target_include_directories(event_detection_lib
+    PUBLIC
+    ${event_detector_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIRS}
+    )
 
 add_executable(${PROJECT_NAME}
-        src/EventDetector.h
-        src/EventMetaData.h
-        src/EventStorage.h
-        src/main.cpp
-        src/DefaultEventDetectionStrategy.h
+    src/main.cpp
+    )
 
-        )
-target_link_libraries(${PROJECT_NAME} libanalyze)
-target_link_libraries(${PROJECT_NAME} dataloader)
-target_link_libraries(${PROJECT_NAME}
-        ${Boost_LIBRARIES}
-        )
-target_include_directories(${PROJECT_NAME}
-        PUBLIC
-        ${Boost_INCLUDE_DIRS}
-        )
+target_link_libraries(${PROJECT_NAME} event_detection_lib)
 
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)

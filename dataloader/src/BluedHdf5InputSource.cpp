@@ -9,6 +9,7 @@ void BluedHdf5InputSource::startReading(const std::string &file_path) {
 void BluedHdf5InputSource::startReading(const std::string &file_path, std::function<void()> callback) {
     this->continue_reading = true;
     auto runner_function = std::bind(&BluedHdf5InputSource::run, this, file_path, callback);
+    this->initStartValues();
     this->runner = std::thread(runner_function);
 }
 
@@ -17,8 +18,6 @@ void BluedHdf5InputSource::run(const std::string &file_path, std::function<void(
     H5File file(file_path, H5F_ACC_RDONLY);
     DataSet dataset = file.openDataSet("data");
     DataSpace dataspace = dataset.getSpace();
-    this->current_offset[0] = 0;
-    this->current_offset[1] = 0;
 
     int rank = dataspace.getSimpleExtentNdims();
     if (rank != 2) {
@@ -29,7 +28,7 @@ void BluedHdf5InputSource::run(const std::string &file_path, std::function<void(
     if (this->data_set_size[1] != this->fields) {
         throw std::exception();
     }
-    while (this->continue_reading) {this->readOnce(dataset, dataspace);}
+    while (this->continue_reading) { this->readOnce(dataset, dataspace); }
     callback();
 
 }
@@ -53,7 +52,7 @@ bool BluedHdf5InputSource::readOnce(H5::DataSet dataset, H5::DataSpace &dataspac
     this->data_manager.addDataPoints(buffer, buffer + count[0]);
 
     current_offset[0] += count[0];
-
+    updateDynamicStreamMetaData(this->buffer[read_count-1]);
     return this->continue_reading;
 
 }
@@ -69,5 +68,18 @@ void BluedHdf5InputSource::stopGracefully() {
         this->continue_reading = false;
         this->runner.join();
     }
+}
+
+void BluedHdf5InputSource::updateDynamicStreamMetaData(BluedDataPoint to_update) {
+    DynamicStreamMetaData::DataPointIdType dp_id(this->current_offset[0] - 1);
+    DynamicStreamMetaData::USDurationType time_passed(static_cast<int64_t>(to_update.x_value * 1000 * 1000));
+    this->meta_data.syncTimePoint(dp_id, this->start_time + time_passed);
+}
+
+void BluedHdf5InputSource::initStartValues() {
+    this->current_offset[0] = 0;
+    this->current_offset[1] = 0;
+    this->start_time = boost::posix_time::time_from_string(this->meta_data.getFixedPowerMetaData().data_set_start_time);
+
 }
 

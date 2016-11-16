@@ -55,17 +55,19 @@ static int handler(void *user, const char *section, const char *name, const char
 
         bool success = mapSetting<float>("main", "scale_volts", section, name, value, calib->scale_volts);
         success |= mapSetting<float>("main", "scale_amps", section, name, value, calib->scale_amps);
-        success |= mapSetting<unsigned int>("main", "sample_rate", section, name, value, calib->sample_rate);
+        success |= mapSetting<unsigned long>("main", "sample_rate", section, name, value, calib->sample_rate);
 
-        success |= mapSetting<unsigned int>("main", "frequency", section, name, value, calib->frequency);
+        success |= mapSetting<unsigned long>("main", "frequency", section, name, value, calib->frequency);
         success |= mapSetting<float>("main", "voltage", section, name, value, calib->voltage);
         success |= mapSetting<std::string>("main", "data_set_start_time", section, name, value,
                                    calib->data_set_start_time);
 
-        success |= mapSetting<unsigned int>("data", "max_data_points_in_queue", section, name, value,
+        success |= mapSetting<unsigned long>("data", "max_data_points_in_queue", section, name, value,
                                             calib->max_data_points_in_queue);
-        success |= mapSetting<int>("data", "periods_stored", section, name, value,
-                                            calib->periods_stored);
+        success |= mapSetting<int>("data", "data_points_stored_of_event", section, name, value,
+                                   calib->data_points_stored_of_event);
+        success |= mapSetting<int>("data", "data_points_stored_before_event", section, name, value,
+                                   calib->data_points_stored_before_event);
 
 
         return success;
@@ -93,7 +95,8 @@ std::ostream &operator<<(std::ostream &stream, const PowerMetaData &meta_data) {
     stream << "data_set_start_time: " << meta_data.data_set_start_time << "\n";
 
     stream << "max_data_points_in_queue: " << meta_data.max_data_points_in_queue << "\n";
-    stream << "periods_stored: " << meta_data.periods_stored << "\n";
+    stream << "data_points_stored_of_event: " << meta_data.data_points_stored_of_event << "\n";
+    stream << "data_points_stored_before_event " << meta_data.data_points_stored_before_event << "\n";
 
 
 

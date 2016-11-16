@@ -11,11 +11,13 @@ public:
         this->threshold = detection_threshold;
     }
 
-    bool detectEvent(DefaultDataPoint * previous_period, DefaultDataPoint* current_period, unsigned int num_data_points_per_period) {
+    template <typename  IteratorType>
+    bool detectEvent(IteratorType begin, IteratorType end, unsigned int num_data_points_per_period) {
         if(previous_rms == -100000) {
-            previous_rms = Algorithms::rootMeanSquare(previous_period, previous_period + num_data_points_per_period);
+            previous_rms = Algorithms::rootMeanSquare(begin, end);
+            return false;
         }
-        float current_rms = Algorithms::rootMeanSquare(current_period, current_period + num_data_points_per_period);
+        float current_rms = Algorithms::rootMeanSquare(begin, end);
         bool success = current_rms - threshold > previous_rms;
         previous_rms = current_rms;
         return success;

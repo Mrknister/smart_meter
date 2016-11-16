@@ -1,62 +1,63 @@
 cmake_minimum_required(VERSION 2.8)
-project (dataloader)
+project(dataloader)
 
 
-set (PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set (dataloader_INCLUDE_DIR ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
+set(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(dataloader_INCLUDE_DIR ${PROJECT_SOURCE_DIR} ${PROJECT_BINARY_DIR})
 
 
 include(${CMAKE_SOURCE_DIR}/cmake/Scripts/AddDoxygenTarget.cmake)
 add_doxygen_target("dataloader_doc")
 
 # add ini file parser 
-set(INIH_SOURCES 
+set(INIH_SOURCES
     "${EXTERNAL_DEPENDENCIES_DIR}/inih/ini.c"
     )
 include_directories("${EXTERNAL_DEPENDENCIES_DIR}/inih")
 
 set(DATALOADER_SRCS
-        src/BluedDataPoint.h
-        src/BluedDefinitions.h
-        src/BluedHdf5Converter.cpp
-        src/BluedHdf5Converter.h
-        src/BluedHdf5InputSource.cpp
-        src/BluedHdf5InputSource.h
-        src/BluedInputSource.cpp
-        src/BluedInputSource.h
-        src/DataManager.h
-        src/DefaultDataPoint.h
-        src/PowerMetaData.cpp
-        src/PowerMetaData.h
-        src/BluedToDefaultDataManagerAdapter.h
-        ${INIH_SOURCES}
-)
-
-
+    src/BluedDataPoint.h
+    src/BluedDefinitions.h
+    src/BluedHdf5Converter.cpp
+    src/BluedHdf5Converter.h
+    src/BluedHdf5InputSource.cpp
+    src/BluedHdf5InputSource.h
+    src/BluedInputSource.cpp
+    src/BluedInputSource.h
+    src/DataManager.h
+    src/DefaultDataPoint.h
+    src/PowerMetaData.cpp
+    src/PowerMetaData.h
+    src/BluedToDefaultDataManagerAdapter.h
+    src/DynamicStreamMetaData.h
+    src/DynamicStreamMetaData.cpp)
 
 
 find_package(SndFile REQUIRED)
-find_package (Boost COMPONENTS system filesystem REQUIRED)
-find_package(HDF5 REQUIRED COMPONENTS CXX)
+find_package(Boost COMPONENTS system filesystem date_time REQUIRED)
 
+include(/usr/local/HDF_Group/HDF5/1.10.0/share/cmake/hdf5-config.cmake)
 
-add_library(${PROJECT_NAME}  ${DATALOADER_SRCS})
+add_library(${PROJECT_NAME} ${DATALOADER_SRCS} ${INIH_SOURCES})
 
-target_include_directories(${PROJECT_NAME} 
-    PUBLIC 
-    "${dataloader_INCLUDE_DIR}"  
+target_include_directories(${PROJECT_NAME}
+    PUBLIC
+    "${dataloader_INCLUDE_DIR}"
     ${Boost_INCLUDE_DIRS}
     ${SNDFILE_INCLUDE_DIR}
-    ${HDF5_INCLUDE_DIRS}
-)
+    ${HDF5_INCLUDE_DIR_CPP}
+    )
+set (HDF5_LIBRARIES /usr/local/HDF_Group/HDF5/1.10.0/lib/libhdf5_cpp_debug.a /usr/local/HDF_Group/HDF5/1.10.0/lib/libhdf5_debug.a
+
+    -ldl
+    )
 
 target_link_libraries(${PROJECT_NAME} -lm -lpthread)
-target_link_libraries(${PROJECT_NAME} 
+target_link_libraries(${PROJECT_NAME}
     ${SNDFILE_LIBRARIES}
-    ${Boost_FILESYSTEM_LIBRARY}
-    ${Boost_SYSTEM_LIBRARY}
+    ${Boost_LIBRARIES}
     ${HDF5_LIBRARIES}
-)
+    )
+message("Boost Libraries linked to ${PROJECT_NAME}: ${Boost_LIBRARIES}")
 
-
-install (TARGETS ${PROJECT_NAME} DESTINATION lib)
+install(TARGETS ${PROJECT_NAME} DESTINATION lib)

@@ -42,7 +42,8 @@ public:
      * @param end Iterator end. If the running iterator equals end, no more data will be written.
      *
      */
-    template<class IteratorType> IteratorType getDataPoints(IteratorType begin, IteratorType end);
+    template<class IteratorType> IteratorType
+    getDataPoints(IteratorType begin, IteratorType end, unsigned long offset = 0);
 
 
     /**
@@ -102,11 +103,13 @@ public:
 
 
 private:
-    std::function<bool()> getQueueHasEnoughElementsWaiter(unsigned int num_elements);
+    std::function<bool()> getQueueHasEnoughElementsWaiter(unsigned long num_elements);
 
     std::function<bool()> getQueueNotFullWaiter();
 
     std::function<bool()> getQueueNotEmptyWaiter();
+
+    void removePointsFromQueue(unsigned long num_data_points);
 
 
 private:
@@ -162,14 +165,14 @@ DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end) 
 
 
 template<typename DataPointType> template<typename IteratorType> IteratorType
-DataManager<DataPointType>::getDataPoints(IteratorType begin, IteratorType end) {
-    auto waiting_function = this->getQueueHasEnoughElementsWaiter(end - begin);
-
+DataManager<DataPointType>::getDataPoints(IteratorType begin, IteratorType end, unsigned long offset) {
+    auto waiting_function = this->getQueueHasEnoughElementsWaiter(end - begin + offset);
+    int size = this->data_queue.size();
     std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
     this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
-    long pullable_elements = this->data_queue.size();
+    long pullable_elements = this->data_queue.size() - offset;
     long elements_pulled = std::min(end - begin, pullable_elements);
-    begin = std::copy_n(data_queue.begin(), elements_pulled, begin);
+    begin = std::copy_n(data_queue.begin() + offset, elements_pulled, begin);
     return begin;
 }
 
@@ -177,12 +180,8 @@ template<typename DataPointType> void DataManager<DataPointType>::nextDataPoints
     std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
 
     auto queue_has_enough_elements = this->getQueueHasEnoughElementsWaiter(num_data_points);
-    if (num_data_points > this->data_queue.size()) {
-        data_queue.clear();
-        return;
-    }
     this->deque_underflow.wait(deque_overflow_wait_lock, queue_has_enough_elements);
-    this->data_queue.erase(data_queue.begin(), data_queue.begin() + num_data_points);
+    this->removePointsFromQueue(num_data_points);
     this->deque_overflow.notify_one();
 }
 
@@ -199,15 +198,15 @@ template<typename DataPointType> void DataManager<DataPointType>::addDataPoint(D
 }
 
 template<typename DataPointType> std::function<bool()>
-DataManager<DataPointType>::getQueueHasEnoughElementsWaiter(unsigned int num_elements) {
+DataManager<DataPointType>::getQueueHasEnoughElementsWaiter(unsigned long num_elements) {
     return [this, num_elements]() -> bool {
-        return this->data_queue.size() >= num_elements || this->stream_ended ;
+        return this->data_queue.size() >= num_elements || this->stream_ended;
     };
 }
 
 template<typename DataPointType> std::function<bool()> DataManager<DataPointType>::getQueueNotEmptyWaiter() {
     return [this]() -> bool {
-        return this->data_queue.size() > 0 || this->stream_ended ;
+        return this->data_queue.size() > 0 || this->stream_ended;
     };
 }
 
@@ -222,24 +221,34 @@ template<typename DataPointType> void DataManager<DataPointType>::notifyStreamEn
     this->deque_underflow.notify_one();
 }
 
-template<typename DataPointType>
-template<class IteratorType> IteratorType
+template<typename DataPointType> template<class IteratorType> IteratorType
 DataManager<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) {
     auto waiting_function = this->getQueueNotEmptyWaiter();
     do {
         std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
+        auto size = this->data_queue.size();
+
         this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
 
-        unsigned long pullable_elements = this->data_queue.size();
-        unsigned long elements_pulled = std::min(end - begin, static_cast<long>(pullable_elements));
+        long pullable_elements = this->data_queue.size();
+        long elements_pulled = std::min(end - begin, pullable_elements);
         begin = std::copy_n(data_queue.begin(), elements_pulled, begin);
-        this->data_queue.erase(data_queue.begin(), data_queue.begin() + elements_pulled);
+        this->removePointsFromQueue(elements_pulled);
         this->deque_overflow.notify_one();
 
-    } while (begin != end && !this->stream_ended );
+    } while (begin != end && !this->stream_ended);
     return begin;
 }
 
+template<typename DataPointType> void DataManager<DataPointType>::removePointsFromQueue(unsigned long num_data_points) {
+    if (num_data_points >= this->data_queue.size()) {
+        data_queue.clear();
+        return;
+    }
+    this->data_queue.erase(data_queue.begin(), data_queue.begin() + num_data_points);
+
+
+}
 
 
 #endif // _DATAMANAGER_H_

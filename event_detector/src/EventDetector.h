@@ -5,13 +5,14 @@
 #include <string>
 #include <memory>
 #include <thread>
+#include <cassert>
 #include "EventMetaData.h"
 #include "EventStorage.h"
 #include <utility>
 #include "DefaultEventDetectionStrategy.h"
 
 
-template<typename EventDetectionStrategyType = DefaultEventDetectionStrategy> class EventDetector {
+template<typename EventDetectionStrategyType = DefaultEventDetectionStrategy, typename DataPointType = DefaultDataPoint> class EventDetector {
 public:
     /**
      * @brief This function spawns a thread that reads data from a DefaultDataManager and detects events in it. If the thread is already running the program will wait until it has ended.
@@ -19,9 +20,8 @@ public:
      * @param meta_data
      * @param time
      */
-    void
-    startAnalyzing(DefaultDataManager *input_data_manager, PowerMetaData meta_data, EventDetectionStrategyType strategy,
-                   EventMetaData::TimeType time = boost::posix_time::second_clock::universal_time());
+    void startAnalyzing(DefaultDataManager *input_data_manager, DynamicStreamMetaData *meta_data,
+                        EventDetectionStrategyType strategy = EventDetectionStrategyType());
 
     /**
      * @brief Waits until a full period can be read and analyzes it for events. If one is detected it reads additional data until the event can be stored
@@ -37,39 +37,38 @@ public:
 private:
     void run();
 
-    bool readBuffer(DefaultDataPoint *data_point);
+    bool readBuffer(DataPointType *data_point);
 
-    bool detectEvent(DefaultDataPoint *prev_period, DefaultDataPoint *current_period);
+    bool detectEvent(DataPointType *prev_period, DataPointType *current_period);
 
-    void storeEvent(DefaultDataPoint *prev_period, DefaultDataPoint *current_period);
-
-    boost::posix_time::time_duration getTimePassed();
-
-    EventMetaData::TimeType getCurrentTime();
+    void storeEvent(DataPointType *prev_period, DataPointType *current_period);
 
 private:
     bool continue_analyzing = true;
     bool stop_now = false;
 
     EventDetectionStrategyType event_detection_strategy;
+    DynamicStreamMetaData *dynamic_meta_data;
+
     PowerMetaData power_meta_data;
     DefaultDataManager *data_manager;
-
-    EventMetaData::TimeType stream_start_time;
-    unsigned long periods_read = 0;
-
-    std::unique_ptr<DefaultDataPoint> electrical_period_buffer1;
-    std::unique_ptr<DefaultDataPoint> electrical_period_buffer2;
+    DynamicStreamMetaData::DataPointIdType data_points_read = -1;
+    unsigned long buffer_length;
+    std::unique_ptr<DataPointType[]> electrical_period_buffer1;
+    std::unique_ptr<DataPointType[]> electrical_period_buffer2;
 
     EventStorage storage;
 
     std::thread runner;
 };
 
-template<class EventDetectionStrategyType> void
-EventDetector<EventDetectionStrategyType>::startAnalyzing(DefaultDataManager *input_data_manager,
-                                                          PowerMetaData meta_data, EventDetectionStrategyType strategy,
-                                                          EventMetaData::TimeType start_time) {
+template<typename EventDetectionStrategyType, typename DataPointType> void
+EventDetector<EventDetectionStrategyType, DataPointType>::startAnalyzing(DefaultDataManager *input_data_manager,
+                                                                         DynamicStreamMetaData *meta_data,
+                                                                         EventDetectionStrategyType strategy) {
+    assert(input_data_manager != nullptr);
+    assert(meta_data != nullptr);
+
     // block until the thread has ended. We can't have 2 threads writing into the buffers at the same time.
     if (this->runner.joinable()) {
         this->runner.join();
@@ -77,25 +76,25 @@ EventDetector<EventDetectionStrategyType>::startAnalyzing(DefaultDataManager *in
     this->continue_analyzing = true;
     this->stop_now = false;
     this->data_manager = input_data_manager;
-    this->power_meta_data = meta_data;
+    this->dynamic_meta_data = meta_data;
+    this->power_meta_data = meta_data->getFixedPowerMetaData();
     this->event_detection_strategy = std::move(strategy);
 
-
-    this->stream_start_time = start_time;
-
+    this->buffer_length = power_meta_data.dataPointsPerPeriod();
 
     // create buffers for the electrical periods
-    this->electrical_period_buffer1 = std::unique_ptr<DefaultDataPoint>(
-            new DefaultDataPoint[meta_data.dataPointsPerPeriod()]);
-    this->electrical_period_buffer2 = std::unique_ptr<DefaultDataPoint>(
-            new DefaultDataPoint[meta_data.dataPointsPerPeriod()]);
+    this->electrical_period_buffer1 = std::unique_ptr<DataPointType[]>(
+            new DataPointType[buffer_length]);
+    this->electrical_period_buffer2 = std::unique_ptr<DataPointType[]>(
+            new DataPointType[buffer_length]);
 
-    runner = std::thread(&EventDetector<EventDetectionStrategyType>::run, this);
+    runner = std::thread(&EventDetector<EventDetectionStrategyType, DataPointType>::run, this);
 }
 
-template<class EventDetectionStrategyType> void EventDetector<EventDetectionStrategyType>::run() {
-    DefaultDataPoint *buffer_prev_period = this->electrical_period_buffer1.get();
-    DefaultDataPoint *buffer_current_period = this->electrical_period_buffer2.get();
+template<typename EventDetectionStrategyType, typename DataPointType> void
+EventDetector<EventDetectionStrategyType, DataPointType>::run() {
+    DataPointType *buffer_prev_period = this->electrical_period_buffer1.get();
+    DataPointType *buffer_current_period = this->electrical_period_buffer2.get();
     this->readBuffer(buffer_prev_period);
     while (this->readBuffer(buffer_current_period) && this->continue_analyzing) {
         if (this->detectEvent(buffer_prev_period, buffer_current_period)) {
@@ -105,20 +104,24 @@ template<class EventDetectionStrategyType> void EventDetector<EventDetectionStra
     }
 }
 
-template<class EventDetectionStrategyType> bool
-EventDetector<EventDetectionStrategyType>::readBuffer(DefaultDataPoint *data_point) {
-    DefaultDataPoint *buffer_end = data_point + this->power_meta_data.dataPointsPerPeriod();
-    DefaultDataPoint *data_end = data_manager->popDataPoints(data_point, buffer_end);
-    this->periods_read += 1;
+template<typename EventDetectionStrategyType, typename DataPointType> bool
+EventDetector<EventDetectionStrategyType, DataPointType>::readBuffer(DataPointType *data_point) {
+    DataPointType *buffer_end = data_point + this->buffer_length;
+
+    DataPointType *data_end = data_manager->getDataPoints(data_point, buffer_end,
+                                                          static_cast<unsigned long> (this->power_meta_data.data_points_stored_before_event));
+    data_manager->nextDataPoints(this->buffer_length);
+    this->data_points_read += this->buffer_length;
     return data_end == buffer_end;
 }
 
-template<class EventDetectionStrategyType> bool
-EventDetector<EventDetectionStrategyType>::detectEvent(DefaultDataPoint *prev_period,
-                                                       DefaultDataPoint *current_period) {
-    if (this->event_detection_strategy.detectEvent(prev_period, current_period, this->power_meta_data.dataPointsPerPeriod())) {
-        std::cout << "time: " << this->getCurrentTime() << " = " << this->stream_start_time << " + "
-                  << this->getTimePassed().total_milliseconds() / 1000.f << std::endl;
+template<typename EventDetectionStrategyType, typename DataPointType> bool
+EventDetector<EventDetectionStrategyType, DataPointType>::detectEvent(DataPointType *prev_period,
+                                                                      DataPointType *current_period) {
+    if (this->event_detection_strategy.detectEvent(current_period,
+                                                   current_period + this->buffer_length,
+                                                   this->buffer_length)) {
+        std::cout << "time: " << this->dynamic_meta_data->getDataPointTime(this->data_points_read) << std::endl;
 
         return true;
 
@@ -126,38 +129,30 @@ EventDetector<EventDetectionStrategyType>::detectEvent(DefaultDataPoint *prev_pe
     return false;
 }
 
-template<class EventDetectionStrategyType> void
-EventDetector<EventDetectionStrategyType>::storeEvent(DefaultDataPoint *prev_period, DefaultDataPoint *current_period) {
+template<typename EventDetectionStrategyType, typename DataPointType> void
+EventDetector<EventDetectionStrategyType, DataPointType>::storeEvent(DataPointType *prev_period,
+                                                                     DataPointType *current_period) {
     // Make sure we want to store at least one period of data
-    if (this->power_meta_data.periods_stored <= 0 || this->stop_now) { return; }
+    if (this->power_meta_data.data_points_stored_of_event <= 0 || this->stop_now) { return; }
 
-    // store the two periods we already accuired in a buffer_vector
-    std::vector<DefaultDataPoint> to_store(prev_period, prev_period + this->power_meta_data.dataPointsPerPeriod());
-    to_store.insert(to_store.end(), current_period, current_period + this->power_meta_data.dataPointsPerPeriod());
-    to_store.resize((this->power_meta_data.periods_stored + 1) * this->power_meta_data.dataPointsPerPeriod());
-    //get the rest of the periods we want
-    this->data_manager->popDataPoints(to_store.begin() + this->power_meta_data.dataPointsPerPeriod() * 2,
-                                      to_store.end());
-    this->storage.storeEvent(to_store.begin(), to_store.end(), EventMetaData(this->getCurrentTime()));
+    int total_data_points_stored = this->dynamic_meta_data->getFixedPowerMetaData().data_points_stored_before_event;
+    total_data_points_stored += this->dynamic_meta_data->getFixedPowerMetaData().data_points_stored_of_event;
+    std::unique_ptr<DataPointType[]> data_points(new DataPointType[total_data_points_stored]);
 
+
+    this->data_manager->popDataPoints(data_points.get(), data_points.get() + total_data_points_stored);
+    this->storage.storeEvent(data_points.get(), data_points.get() + total_data_points_stored,
+                             EventMetaData(this->dynamic_meta_data->getDataPointTime(this->data_points_read)));
 }
 
-template<class EventDetectionStrategyType> boost::posix_time::time_duration
-EventDetector<EventDetectionStrategyType>::getTimePassed() {
-    return boost::posix_time::seconds(periods_read) / this->power_meta_data.frequency;
-}
-
-template<class EventDetectionStrategyType> EventMetaData::TimeType
-EventDetector<EventDetectionStrategyType>::getCurrentTime() {
-    return this->stream_start_time + this->getTimePassed();
-}
-
-template<class EventDetectionStrategyType> void EventDetector<EventDetectionStrategyType>::stopGracefully() {
+template<typename EventDetectionStrategyType, typename DataPointType> void
+EventDetector<EventDetectionStrategyType, DataPointType>::stopGracefully() {
     this->continue_analyzing = false;
     this->runner.join();
 }
 
-template<class EventDetectionStrategyType> void EventDetector<EventDetectionStrategyType>::stopNow() {
+template<typename EventDetectionStrategyType, typename DataPointType> void
+EventDetector<EventDetectionStrategyType, DataPointType>::stopNow() {
     this->continue_analyzing = false;
     this->stop_now = true;
 

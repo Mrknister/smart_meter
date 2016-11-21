@@ -20,7 +20,7 @@ public:
      * @param meta_data
      * @param time
      */
-    void startAnalyzing(DefaultDataManager *input_data_manager, DynamicStreamMetaData *meta_data,
+    void startAnalyzing(DataManager<DataPointType> *input_data_manager, DynamicStreamMetaData *meta_data,
                         EventDetectionStrategyType strategy = EventDetectionStrategyType());
 
     /**
@@ -32,6 +32,11 @@ public:
      * @brief Stops the thread as fast as possible, possibly disarding data.
      */
     void stopNow();
+
+
+    void join() {
+        runner.join();
+    }
 
 
 private:
@@ -51,19 +56,19 @@ private:
     DynamicStreamMetaData *dynamic_meta_data;
 
     PowerMetaData power_meta_data;
-    DefaultDataManager *data_manager;
+    DataManager<DataPointType> *data_manager;
     DynamicStreamMetaData::DataPointIdType data_points_read = -1;
     unsigned long buffer_length;
     std::unique_ptr<DataPointType[]> electrical_period_buffer1;
     std::unique_ptr<DataPointType[]> electrical_period_buffer2;
 
-    EventStorage storage;
+    EventStorage<DataPointType> storage;
 
     std::thread runner;
 };
 
 template<typename EventDetectionStrategyType, typename DataPointType> void
-EventDetector<EventDetectionStrategyType, DataPointType>::startAnalyzing(DefaultDataManager *input_data_manager,
+EventDetector<EventDetectionStrategyType, DataPointType>::startAnalyzing(DataManager<DataPointType> *input_data_manager,
                                                                          DynamicStreamMetaData *meta_data,
                                                                          EventDetectionStrategyType strategy) {
     assert(input_data_manager != nullptr);

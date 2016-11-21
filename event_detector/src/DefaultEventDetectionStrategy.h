@@ -5,6 +5,7 @@
 #include "Algorithms.h"
 
 
+
 class DefaultEventDetectionStrategy {
 public:
     DefaultEventDetectionStrategy(float detection_threshold = 1.0){

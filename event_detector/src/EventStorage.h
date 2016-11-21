@@ -5,15 +5,21 @@
 #include <string>
 #include <fstream>
 
-#include <H5Cpp.h>
+
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 
 #include "DefaultDataPoint.h"
 #include "EventMetaData.h"
+#include "Event.h"
 
-class EventStorage {
+
+template<typename DataPointType=DefaultDataPoint> class EventStorage {
 public:
     template<typename IteratorType> unsigned int
     storeEvent(IteratorType begin, const IteratorType end, const EventMetaData &meta_data);
+
+    Event<DataPointType> loadEvent(int event_uuid);
 
 
 private:
@@ -21,98 +27,64 @@ private:
     writeToFile(IteratorType begin, const IteratorType end, const std::string &file_name,
                 const EventMetaData &meta_data);
 
-    void writeMetaDataToFile(H5::H5File &dst_file, const EventMetaData &meta_data);
+    template<typename IteratorType> std::vector<DataPointType>
+    eventDataToVector(IteratorType begin, const IteratorType end);
 
-    template<typename IteratorType> void
-    writeEventDataToFile(IteratorType begin, const IteratorType end, H5::H5File &dst_file);
+    std::string createFilePath(int uuid);
 
-    void createEventDataSet(H5::H5File &dst_file, H5::DataSet &data_set, const hsize_t num_data_points);
-
+public:
+    std::string event_directory = "events/";
 private:
     enum {
         buffer_size = 256
     };
-
-    static const int rank = 2;
-    static const int ncols = 2;
-
-    hsize_t dims[rank] = {0, ncols};
-
 };
 
-
+template<typename DataPointType>
 template<typename IteratorType> unsigned int
-EventStorage::storeEvent(IteratorType begin, const IteratorType end, const EventMetaData &meta_data) {
+EventStorage<DataPointType>::storeEvent(IteratorType begin, const IteratorType end, const EventMetaData &meta_data) {
     static unsigned int uuid = 0;
-    writeToFile(begin, end, "events/event_" + std::to_string(uuid) + ".hdf5", meta_data);
+    writeToFile<IteratorType>(begin, end, createFilePath(uuid), meta_data);
     return uuid++;
 }
 
+template<typename DataPointType>
 template<typename IteratorType> void
-EventStorage::writeToFile(IteratorType begin, const IteratorType end, const std::string &file_name,
-                          const EventMetaData &meta_data) {
-    H5::H5File file(file_name, H5F_ACC_TRUNC);
-    writeMetaDataToFile(file, meta_data);
-    writeEventDataToFile(begin, end, file);
-    file.close();
+EventStorage<DataPointType>::writeToFile(IteratorType begin, const IteratorType end, const std::string &file_name,
+                                         const EventMetaData &meta_data) {
+    std::ofstream out_stream(file_name);
+    boost::archive::text_oarchive oa(out_stream);
+    // write class instance to archive
+    Event<DataPointType> event;
+    event.event_data = eventDataToVector<IteratorType>(begin, end);
+    event.event_meta_data = meta_data;
 
+    oa << event;
+    out_stream.close();
 }
 
-inline void EventStorage::writeMetaDataToFile(H5::H5File &dst_file, const EventMetaData &meta_data) {
-    using namespace H5;
-    using namespace std;
-    std::string time_str = boost::posix_time::to_simple_string(meta_data.event_time);
-    StrType time_type(PredType::C_S1, time_str.size());
-    DataSpace ds(H5S_SCALAR);
-    Attribute at = dst_file.createAttribute("time", time_type, ds);
-    at.write(time_type, time_str);
+template<typename DataPointType > Event<DataPointType>
+EventStorage<DataPointType>::loadEvent(int event_uuid) {
+    std::string file_path = createFilePath(event_uuid);
 
+    std::ifstream ifs(file_path);
+    boost::archive::text_iarchive ia(ifs);
+
+
+    Event<DataPointType> result;
+    ia >> result;
+    return result;
 }
 
-template<typename IteratorType> void
-EventStorage::writeEventDataToFile(IteratorType begin, const IteratorType end, H5::H5File &dst_file) {
-    DefaultDataPoint buffer[buffer_size];
-    unsigned long points_written = std::min(static_cast<const unsigned long>(end - begin),
-                                            static_cast<const unsigned long>( buffer_size));
-    using namespace H5;
+template<typename DataPointType>
 
-    hsize_t offset[2] = {0, 0};
-    H5::DataSet dataset;
-    createEventDataSet(dst_file, dataset, end-begin);
-
-    while (points_written != 0) {
-        std::copy(begin, begin + points_written, buffer);
-        hsize_t size[2] = {offset[0] + points_written, this->dims[1]};
-        dataset.extend(size);
-        hsize_t hyper_slab_dimensions[2] = {points_written, this->dims[1]};
-        DataSpace mspace(rank, hyper_slab_dimensions);
-        DataSpace fspace = dataset.getSpace();
-
-        fspace.selectHyperslab(H5S_SELECT_SET, hyper_slab_dimensions, offset);
-        dataset.write(reinterpret_cast<const void *>(buffer), PredType::NATIVE_FLOAT, mspace, fspace);
-        offset[0] += points_written;
-        begin += points_written;
-
-        points_written = std::min(static_cast<const unsigned long>(end - begin),
-                                  static_cast<const unsigned long>( buffer_size));
-    }
-
-
+template<typename IteratorType> std::vector<DataPointType>
+EventStorage<DataPointType>::eventDataToVector(IteratorType begin, const IteratorType end) {
+    return std::vector<DataPointType>(begin, end);
 }
 
-inline void EventStorage::createEventDataSet(H5::H5File &dst_file, H5::DataSet &data_set, const hsize_t num_data_points) {
-    using namespace H5;
-    DataType datatype(PredType::NATIVE_FLOAT);
-
-
-    hsize_t max_dims[rank] = {num_data_points, ncols};
-
-    DataSpace file_data_space(rank, this->dims, max_dims);
-    DSetCreatPropList cparms;
-    hsize_t chunk_dims[rank] = {buffer_size, ncols};
-    cparms.setChunk(rank, chunk_dims);
-
-    data_set = dst_file.createDataSet("/data", datatype, file_data_space, cparms);
+template<typename DataPointType> std::string EventStorage<DataPointType>::createFilePath(int uuid) {
+    return event_directory + "/event_" + std::to_string(uuid) + ".archive";
 }
 
 #endif // EVENTSTORAGE_H

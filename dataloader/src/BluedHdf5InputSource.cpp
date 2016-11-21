@@ -43,16 +43,15 @@ bool BluedHdf5InputSource::readOnce(H5::DataSet dataset, H5::DataSpace &dataspac
         read_count = this->data_set_size[0] - this->current_offset[0];
         this->continue_reading = false;
     }
+
     hsize_t count[2] = {read_count, this->data_set_size[1]};
     dataspace.selectHyperslab(H5S_SELECT_SET, count, current_offset);
     hsize_t offset_out[2] = {0, 0};
     this->memspace.selectHyperslab(H5S_SELECT_SET, count, offset_out);
 
-    dataset.read(this->buffer, H5::PredType::NATIVE_FLOAT, memspace, dataspace);
-    this->data_manager.addDataPoints(buffer, buffer + count[0]);
-
+    dataset.read(this->buffer, H5::PredType::NATIVE_FLOAT, this->memspace, dataspace);
+    writeBufferToDataSet(count[0]);
     current_offset[0] += count[0];
-    updateDynamicStreamMetaData(this->buffer[read_count-1]);
     return this->continue_reading;
 
 }
@@ -80,6 +79,19 @@ void BluedHdf5InputSource::initStartValues() {
     this->current_offset[0] = 0;
     this->current_offset[1] = 0;
     this->start_time = boost::posix_time::time_from_string(this->meta_data.getFixedPowerMetaData().data_set_start_time);
+}
+
+void BluedHdf5InputSource::writeBufferToDataSet(unsigned int num_data_points) {
+    BluedDataPoint tmp_buffer[buffer_size];
+    std::transform(&this->buffer[0], &this->buffer[0] + num_data_points, tmp_buffer,[](float* data_points){
+        return BluedDataPoint(data_points[0],data_points[1],data_points[2],data_points[3]);
+    });
+    this->data_manager.addDataPoints(tmp_buffer, tmp_buffer + num_data_points);
+    if(num_data_points > 0) {
+        updateDynamicStreamMetaData(tmp_buffer[num_data_points - 1]);
+    }
+    
+
 
 }
 

@@ -92,11 +92,11 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
 
     }
 
-
+/*
     BOOST_AUTO_TEST_CASE(test_convert_file) {
         BluedHdf5Converter converter;
         converter.convertToHdf5("test_convert", "out.hdf5");
-    }
+    }*/
 /*
     BOOST_AUTO_TEST_CASE(test_convert_mutch) {
         BluedHdf5Converter converter;
@@ -116,14 +116,18 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
         }
         double time = static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
         BOOST_TEST_MESSAGE("Time taken with hdf5: " << time);
-    }
+    }*/
 
     BOOST_AUTO_TEST_CASE(test_hdf5_csv_equality) {
         BluedHdf5InputSource source;
+        PowerMetaData conf;
+        BOOST_TEST(conf.load("config.ini"));
+        source.meta_data.setFixedPowerMetaData(conf);
+
         source.startReading("all_001.hdf5", []() {});
 
         BluedInputSource csv_source;
-        csv_source.readWholeLocation("/home/jan/Downloads/location_001_dataset_001");
+        csv_source.readWholeLocation("/home/jan/Documents/Bachelor Thesis/location_001_dataset_001");
         const int buffer_size = 240;
         BluedDataPoint buffer1[buffer_size];
         BluedDataPoint buffer2[buffer_size];
@@ -137,7 +141,7 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
             BOOST_TEST(buffers_equal);
         }
         BOOST_TEST_MESSAGE("total data points compared: " << (num_data_points_tested / buffer_size - 1) * buffer_size);
-    }*/
+    }
 
     void createDataSet(std::string base_dir, const int data_set_num, const int num_data_points_per_set) {
         const int base_data_point_number = data_set_num * num_data_points_per_set;
@@ -170,7 +174,7 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
         BluedDataPoint *buffer_end = source.data_manager.popDataPoints(buffer, buffer + buffer_size);
         BOOST_TEST(buffer_end == buffer + num_data_sets * data_points_per_set);
         for (int i = 0; i < num_data_sets * data_points_per_set; ++i) {
-            BOOST_TEST(static_cast<int>(buffer[i].voltage_a) == i);
+            BOOST_TEST(static_cast<int>(buffer[i].volts) == i);
         }
         boost::filesystem::remove_all(test_dir);
     }

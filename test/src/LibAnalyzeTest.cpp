@@ -22,7 +22,6 @@ BOOST_AUTO_TEST_SUITE(libanalyze_suite)
         bool success = a.end() == a.begin() + 3;
         BOOST_TEST_MESSAGE("a == a " << success);
         a.erase(a.begin(), a.begin() + 3);
-
     }
 
 BOOST_AUTO_TEST_SUITE_END()

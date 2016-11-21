@@ -17,6 +17,7 @@ add_library(event_detection_lib STATIC
     src/EventStorage.h
     src/DefaultEventDetectionStrategy.h
     src/dummy.cpp
+    src/Event.h
     )
 
 target_link_libraries(event_detection_lib libanalyze)
@@ -32,7 +33,7 @@ target_include_directories(event_detection_lib
 
 add_executable(${PROJECT_NAME}
     src/main.cpp
-    )
+    src/Event.h)
 
 target_link_libraries(${PROJECT_NAME} event_detection_lib)
 

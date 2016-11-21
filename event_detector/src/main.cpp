@@ -28,16 +28,14 @@ int main(int argc, char **argv) {
     std::cout << conf << endl;
 
     BluedHdf5InputSource data_source;
+    data_source.data_manager.setQueueMaxSize(conf.max_data_points_in_queue);
     data_source.meta_data.setFixedPowerMetaData(conf);
 
-    DefaultDataManager default_data_manager;
-    default_data_manager.setQueueMaxSize(conf.max_data_points_in_queue);
     data_source.startReading("all_001.hdf5");
-    std::thread adapter_thread(&adaptBluedToDefaultDataManager, &data_source.data_manager, &default_data_manager);
 
-    EventDetector<> detect;
-    detect.startAnalyzing(&default_data_manager, &data_source.meta_data);
-    adapter_thread.join();
+    EventDetector<DefaultEventDetectionStrategy, BluedDataPoint> detect;
+    detect.startAnalyzing(&data_source.data_manager, &data_source.meta_data);
+    detect.join();
 
 
     return 0;

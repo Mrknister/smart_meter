@@ -14,7 +14,6 @@ BOOST_AUTO_TEST_SUITE(event_storage_suite)
 
         for(int i = 0; i<files_created; ++i ) {
             EventMetaData metaData;
-
             st.storeEvent(buffer,buffer + buffer_size,metaData);
         }
     }

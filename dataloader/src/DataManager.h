@@ -167,7 +167,6 @@ DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end) 
 template<typename DataPointType> template<typename IteratorType> IteratorType
 DataManager<DataPointType>::getDataPoints(IteratorType begin, IteratorType end, unsigned long offset) {
     auto waiting_function = this->getQueueHasEnoughElementsWaiter(end - begin + offset);
-    int size = this->data_queue.size();
     std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
     this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
     long pullable_elements = this->data_queue.size() - offset;

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.0)
 project(dataloader)
 
 
@@ -30,11 +30,11 @@ set(DATALOADER_SRCS
     src/PowerMetaData.h
     src/BluedToDefaultDataManagerAdapter.h
     src/DynamicStreamMetaData.h
-    src/DynamicStreamMetaData.cpp)
+    src/DynamicStreamMetaData.cpp ../data_analyzer/src/DataAnalyzer.h)
 
 
 find_package(SndFile REQUIRED)
-find_package(Boost COMPONENTS system filesystem date_time serialization REQUIRED)
+find_package(Boost 1.60 COMPONENTS system filesystem date_time serialization REQUIRED)
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 
 

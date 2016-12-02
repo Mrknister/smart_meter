@@ -76,21 +76,6 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
         }
     }
 
-    BOOST_AUTO_TEST_CASE(test_blued_data_source) {
-        BluedInputSource source;
-        source.startReading("location_001_dataset_001/location_001_ivdata_001.txt/data", []() {});
-        const int buffer_size = 240;
-        BluedDataPoint buffer[buffer_size];
-        const int num_data_points_tested = 12000 * 60;
-        clock_t start = clock();
-
-        for (int i = 0; i < num_data_points_tested / buffer_size; ++i) {
-            source.data_manager.popDataPoints(buffer, buffer + buffer_size);
-        }
-        double time = static_cast<double>(clock() - start) / static_cast<double>(CLOCKS_PER_SEC);
-        BOOST_TEST_MESSAGE("Time taken with csv: " << time);
-
-    }
 
 /*
     BOOST_AUTO_TEST_CASE(test_convert_file) {
@@ -174,7 +159,7 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
         BluedDataPoint *buffer_end = source.data_manager.popDataPoints(buffer, buffer + buffer_size);
         BOOST_TEST(buffer_end == buffer + num_data_sets * data_points_per_set);
         for (int i = 0; i < num_data_sets * data_points_per_set; ++i) {
-            BOOST_TEST(static_cast<int>(buffer[i].volts) == i);
+            BOOST_TEST(static_cast<int>(buffer[i].voltage_a) == i);
         }
         boost::filesystem::remove_all(test_dir);
     }

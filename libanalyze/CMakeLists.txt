@@ -7,7 +7,8 @@ set(libanalyze_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src)
 set(ANALYZE_SOURCES
     src/dummy.cpp
     src/Algorithms.h
-    src/FastFourierTransformCalculator.h)
+    src/FastFourierTransformCalculator.h
+    src/FastFourierFeature.h)
 
 
 add_library(analyze ${ANALYZE_SOURCES})

@@ -13,7 +13,7 @@ namespace Algorithms {
         DataType result = 0.0;
         DataType n = end-begin;
         while (begin != end) {
-            result += begin->ampere * begin->ampere;
+            result += begin->ampere() * begin->ampere();
             ++begin;
         }
         return std::sqrt(result/n);
@@ -24,7 +24,7 @@ namespace Algorithms {
         DataType result = 0.0;
         DataType n = end-begin;
         while (begin != end) {
-            result += begin->ampere * begin->ampere;
+            result += begin->ampere() * begin->ampere();
             ++begin;
         }
         return std::sqrt(result/n);

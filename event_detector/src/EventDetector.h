@@ -35,7 +35,8 @@ public:
 
 
     void join() {
-        runner.join();
+        if (runner.joinable())
+            runner.join();
     }
 
 
@@ -75,9 +76,8 @@ EventDetector<EventDetectionStrategyType, DataPointType>::startAnalyzing(DataMan
     assert(meta_data != nullptr);
 
     // block until the thread has ended. We can't have 2 threads writing into the buffers at the same time.
-    if (this->runner.joinable()) {
-        this->runner.join();
-    }
+    this->join();
+
     this->continue_analyzing = true;
     this->stop_now = false;
     this->data_manager = input_data_manager;
@@ -88,10 +88,8 @@ EventDetector<EventDetectionStrategyType, DataPointType>::startAnalyzing(DataMan
     this->buffer_length = power_meta_data.dataPointsPerPeriod();
 
     // create buffers for the electrical periods
-    this->electrical_period_buffer1 = std::unique_ptr<DataPointType[]>(
-            new DataPointType[buffer_length]);
-    this->electrical_period_buffer2 = std::unique_ptr<DataPointType[]>(
-            new DataPointType[buffer_length]);
+    this->electrical_period_buffer1 = std::unique_ptr<DataPointType[]>(new DataPointType[buffer_length]);
+    this->electrical_period_buffer2 = std::unique_ptr<DataPointType[]>(new DataPointType[buffer_length]);
 
     runner = std::thread(&EventDetector<EventDetectionStrategyType, DataPointType>::run, this);
 }
@@ -123,8 +121,7 @@ EventDetector<EventDetectionStrategyType, DataPointType>::readBuffer(DataPointTy
 template<typename EventDetectionStrategyType, typename DataPointType> bool
 EventDetector<EventDetectionStrategyType, DataPointType>::detectEvent(DataPointType *prev_period,
                                                                       DataPointType *current_period) {
-    if (this->event_detection_strategy.detectEvent(current_period,
-                                                   current_period + this->buffer_length,
+    if (this->event_detection_strategy.detectEvent(current_period, current_period + this->buffer_length,
                                                    this->buffer_length)) {
         std::cout << "time: " << this->dynamic_meta_data->getDataPointTime(this->data_points_read) << std::endl;
 
@@ -153,7 +150,7 @@ EventDetector<EventDetectionStrategyType, DataPointType>::storeEvent(DataPointTy
 template<typename EventDetectionStrategyType, typename DataPointType> void
 EventDetector<EventDetectionStrategyType, DataPointType>::stopGracefully() {
     this->continue_analyzing = false;
-    this->runner.join();
+    this->join();
 }
 
 template<typename EventDetectionStrategyType, typename DataPointType> void
@@ -162,7 +159,7 @@ EventDetector<EventDetectionStrategyType, DataPointType>::stopNow() {
     this->stop_now = true;
 
     this->data_manager->unblockReadOperations();
-    this->runner.join();
+    this->join();
 }
 
 #endif // EVENTDETECTOR_H

@@ -29,6 +29,7 @@ void BluedHdf5InputSource::run(const std::string &file_path, std::function<void(
         throw std::exception();
     }
     while (this->continue_reading) { this->readOnce(dataset, dataspace); }
+    this->data_manager.notifyStreamEnd();
     callback();
 
 }

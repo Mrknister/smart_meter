@@ -16,12 +16,6 @@ BOOST_AUTO_TEST_SUITE(libanalyze_suite)
 
     }
 
-    BOOST_AUTO_TEST_CASE(test_deque) {
-        using namespace std;
-        deque<int> a{1,2,3};
-        bool success = a.end() == a.begin() + 3;
-        BOOST_TEST_MESSAGE("a == a " << success);
-        a.erase(a.begin(), a.begin() + 3);
-    }
+
 
 BOOST_AUTO_TEST_SUITE_END()

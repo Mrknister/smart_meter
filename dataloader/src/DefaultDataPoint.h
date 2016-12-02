@@ -1,4 +1,3 @@
-
 #ifndef _DATA_POINT_H_
 #define _DATA_POINT_H_
 
@@ -8,13 +7,23 @@
  * 
  */
 struct DefaultDataPoint {
-    DefaultDataPoint(float volt_value, float ampere_value): volts(volt_value) , ampere(ampere_value) {}
-    DefaultDataPoint(): volts(0) , ampere(0) {}
-    DefaultDataPoint(const DefaultDataPoint& other) : volts(other.volts), ampere(other.ampere){}
-
     typedef float datum;
+
+    constexpr DefaultDataPoint(float volt_value, float ampere_value) : volts(volt_value), amps(ampere_value) {}
+
+    constexpr DefaultDataPoint() : volts(0), amps(0) {}
+
+
+    constexpr datum voltage() { return volts; }
+
+    constexpr void voltage(datum v) { this->volts = v; }
+
+    constexpr datum ampere() { return amps; }
+
+    constexpr void ampere(datum a) { this->amps = a; }
+
     datum volts;
-    datum ampere;
+    datum amps;
 };
 
 #endif // _DATA_POINT_H_

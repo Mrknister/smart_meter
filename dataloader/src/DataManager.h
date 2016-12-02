@@ -225,7 +225,6 @@ DataManager<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) 
     auto waiting_function = this->getQueueNotEmptyWaiter();
     do {
         std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
-        auto size = this->data_queue.size();
 
         this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
 

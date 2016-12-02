@@ -18,7 +18,7 @@ add_executable(Test
 target_link_libraries(Test
     dataloader
     libanalyze
-    event_detection_lib
+    event_detector
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}

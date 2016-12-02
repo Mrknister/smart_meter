@@ -20,5 +20,5 @@ cmake ..
 cmake --build . --config Release
 cd $build_dir
 cmake ..
-cmake --build - 
+cmake --build . 
 

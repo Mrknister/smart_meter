@@ -3,8 +3,12 @@
 
 #include <vector>
 #include <mutex>
-#include "Event.h"
+#include <condition_variable>
+#include <dlib/graph_utils.h>
+#include "EventFeatures.h"
 #include "Algorithms.h"
+#include "EventLabelManager.h"
+
 
 struct DefaultDataPoint;
 
@@ -12,44 +16,57 @@ template<typename DataPointType = DefaultDataPoint> class DataAnalyzer {
 public:
     typedef float DataFeatureType;
 
+    void startAnalyzing();
 
     void pushEvent(const Event<DataPointType> &e);
-
-    void pushEvent(const Event<DataPointType> &&e);
 
     void analyzeOneEvent(const Event<DataPointType> &e);
 
 private:
+    static float calculateDistance(const EventFeatures &e1, const EventFeatures &e2);
 
-    std::vector<DataAnalyzer::DataFeatureType> extractFeatureVector(const std::vector<DataPointType> eventData);
 
+public:
+    EventLabelManager<DataPointType> event_label_manager;
+private:
+    std::thread runner;
+    bool continue_analyzing = true;
     std::mutex events_mutex;
-    std::vector<Event<DataPointType>> events;
-};
+    std::condition_variable events_empty_variable;
+    std::vector<EventFeatures> events;
 
+};
 
 
 template<typename DataPointType> void DataAnalyzer<DataPointType>::pushEvent(const Event<DataPointType> &e) {
     std::lock_guard<std::mutex> events_lock(events_mutex);
-    events.push_back(e);
+    events.push_back(EventFeatures::fromEvent<DataPointType>(e));
 }
 
-template<typename DataPointType> void DataAnalyzer<DataPointType>::pushEvent(const Event<DataPointType> &&e) {
-    std::lock_guard<std::mutex> events_lock(events_mutex);
-    events.push_back(std::move(e));
-}
 
 template<typename DataPointType> void DataAnalyzer<DataPointType>::analyzeOneEvent(const Event<DataPointType> &e) {
-    std::vector<DataFeatureType> features = extractFeatureVector(e.event_data);
+    const unsigned long k = 5;
+    std::vector<dlib::sample_pair> out;
+    auto distance_function = std::bind(&DataAnalyzer<DataPointType>::calculateDistance, this);
+    dlib::find_k_nearest_neighbors(this->event_label_manager.labeled_events, distance_function, k, out);
+}
+
+
+template<typename DataPointType> float
+DataAnalyzer<DataPointType>::calculateDistance(const EventFeatures &e1, const EventFeatures &e2) {
+    return Algorithms::distance(e1.feature_vector.begin(), e1.feature_vector.end(), e2.feature_vector.begin(),
+                                e2.feature_vector.end());
+}
+
+void DataAnalyzer::startAnalyzing() {
+    runner = std::thread([this]() {
+        while(this->continue_analyzing) {
+
+        }
+    });
 
 }
 
-template<typename DataPointType>
-std::vector<float>
-DataAnalyzer<DataPointType>::extractFeatureVector(const std::vector<DataPointType> eventData) {
-    DataFeatureType rms = Algorithms::rootMeanSquare(eventData.begin(), eventData.end());
-    return std::vector<DataFeatureType>{rms};
-}
 
 #endif //SMART_SCREEN_DATAANALYZER_H
 

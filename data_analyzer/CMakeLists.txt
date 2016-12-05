@@ -10,7 +10,7 @@ add_doxygen_target("data_analyzer_doc")
 
 add_library(${PROJECT_NAME}
     src/DataAnalyzer.h
-    )
+    src/EventLabelManager.h)
 
 target_link_libraries(${PROJECT_NAME} dataloader event_detector)
 target_include_directories(${PROJECT_NAME}

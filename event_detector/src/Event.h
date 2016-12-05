@@ -14,7 +14,6 @@ public:
     std::vector<DataPointType> event_data;
     EventMetaData event_meta_data;
     typedef float DatumType;
-
 };
 
 

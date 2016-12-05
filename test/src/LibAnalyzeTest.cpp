@@ -1,9 +1,12 @@
 #include "LibAnalyzeTest.h"
 
+
 #include <boost/test/unit_test.hpp>
 #include <deque>
 #include "Algorithms.h"
 #include "DefaultDataPoint.h"
+#define private public
+#include "EventLabelManager.h"
 
 BOOST_AUTO_TEST_SUITE(libanalyze_suite)
 
@@ -16,6 +19,15 @@ BOOST_AUTO_TEST_SUITE(libanalyze_suite)
 
     }
 
+    BOOST_AUTO_TEST_CASE(test_load_event_times) {
+        EventLabelManager<DefaultDataPoint> events;
+        events.loadLabelsFromFile("analyze_test_data/location_001_eventslist_A.txt");
+        std::cout << "loaded " << events.labels.size() << " labels\n";
+        for(auto l : events.labels) {
+            std::cout << l.label << ", " << l.time << std::endl;
+        }
+
+    }
 
 
 BOOST_AUTO_TEST_SUITE_END()

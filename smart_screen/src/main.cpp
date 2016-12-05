@@ -5,9 +5,7 @@
 #include "DataManager.h"
 #include "BluedHdf5InputSource.h"
 
-#include "BluedToDefaultDataManagerAdapter.h"
 #include "EventDetector.h"
-#include "FastFourierTransformCalculator.h"
 #include "DataAnalyzer.h"
 
 int main(int argc, char **argv) {
@@ -35,7 +33,16 @@ int main(int argc, char **argv) {
     data_source.startReading("all_001.hdf5");
 
     EventDetector<DefaultEventDetectionStrategy, BluedDataPoint> detect;
-    detect.startAnalyzing(&data_source.data_manager, &data_source.meta_data);
+    detect.startAnalyzing(&data_source.data_manager, &data_source.meta_data, DefaultEventDetectionStrategy(0.1));
+
+    DataAnalyzer<BluedDataPoint> analyzer;
+    DataAnalyzer<BluedDataPoint>* analyzer_ptr = &analyzer;
+
+    detect.storage.setEventStorageCallback([analyzer_ptr](Event<BluedDataPoint>& e) {
+        std::cout << "Pushed!" << std::endl;
+        analyzer_ptr->pushEvent(e);
+    });
+
     detect.join();
 
 

@@ -27,7 +27,7 @@ struct PowerMetaData {
     std::string data_set_start_time = "";
 
     unsigned long max_data_points_in_queue = 16000; /**< The number of samples we store unitl the writing thread is blocked.*/
-    int data_points_stored_of_event = 0; /**< The number of samples we store unitl the writing thread is blocked.*/
+    int data_points_stored_of_event = 0; /**< The number of samples we store until the writing thread is blocked.*/
     int data_points_stored_before_event = 0;
 
 

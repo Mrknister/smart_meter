@@ -49,6 +49,9 @@ private:
 
     void storeEvent(DataPointType *prev_period, DataPointType *current_period);
 
+public:
+    EventStorage<DataPointType> storage;
+
 private:
     bool continue_analyzing = true;
     bool stop_now = false;
@@ -63,7 +66,6 @@ private:
     std::unique_ptr<DataPointType[]> electrical_period_buffer1;
     std::unique_ptr<DataPointType[]> electrical_period_buffer2;
 
-    EventStorage<DataPointType> storage;
 
     std::thread runner;
 };
@@ -137,14 +139,17 @@ EventDetector<EventDetectionStrategyType, DataPointType>::storeEvent(DataPointTy
     // Make sure we want to store at least one period of data
     if (this->power_meta_data.data_points_stored_of_event <= 0 || this->stop_now) { return; }
 
+
     int total_data_points_stored = this->dynamic_meta_data->getFixedPowerMetaData().data_points_stored_before_event;
     total_data_points_stored += this->dynamic_meta_data->getFixedPowerMetaData().data_points_stored_of_event;
     std::unique_ptr<DataPointType[]> data_points(new DataPointType[total_data_points_stored]);
 
 
     this->data_manager->popDataPoints(data_points.get(), data_points.get() + total_data_points_stored);
-    this->storage.storeEvent(data_points.get(), data_points.get() + total_data_points_stored,
-                             EventMetaData(this->dynamic_meta_data->getDataPointTime(this->data_points_read)));
+    EventMetaData meta_data(this->dynamic_meta_data->getDataPointTime(this->data_points_read),
+                            this->dynamic_meta_data->getFixedPowerMetaData().data_points_stored_before_event,
+                            this->dynamic_meta_data->getFixedPowerMetaData().data_points_stored_of_event);
+    this->storage.storeEvent(data_points.get(), data_points.get() + total_data_points_stored, meta_data);
 }
 
 template<typename EventDetectionStrategyType, typename DataPointType> void

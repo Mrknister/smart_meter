@@ -10,7 +10,6 @@ add_doxygen_target("event_detector_doc")
 find_package(Boost COMPONENTS system filesystem date_time REQUIRED)
 
 
-
 add_library(${PROJECT_NAME} STATIC
     src/EventDetector.h
     src/EventMetaData.h
@@ -18,13 +17,12 @@ add_library(${PROJECT_NAME} STATIC
     src/DefaultEventDetectionStrategy.h
     src/dummy.cpp
     src/Event.h
-    )
+    src/EventFeatures.cpp ../data_analyzer/src/EventFeatures.h)
 
 target_link_libraries(${PROJECT_NAME} libanalyze)
 target_link_libraries(${PROJECT_NAME} dataloader)
-target_link_libraries(${PROJECT_NAME}
-    ${Boost_LIBRARIES}
-    )
+
+target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC

@@ -14,11 +14,11 @@ struct DefaultDataPoint {
     constexpr DefaultDataPoint() : volts(0), amps(0) {}
 
 
-    constexpr datum voltage() { return volts; }
+    constexpr datum voltage() const { return volts; }
 
     constexpr void voltage(datum v) { this->volts = v; }
 
-    constexpr datum ampere() { return amps; }
+    constexpr datum ampere() const { return amps; }
 
     constexpr void ampere(datum a) { this->amps = a; }
 

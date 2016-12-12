@@ -5,6 +5,7 @@
 #include <mutex>
 #include <condition_variable>
 #include <dlib/graph_utils.h>
+#include <thread>
 #include "EventFeatures.h"
 #include "Algorithms.h"
 #include "EventLabelManager.h"
@@ -16,15 +17,25 @@ template<typename DataPointType = DefaultDataPoint> class DataAnalyzer {
 public:
     typedef float DataFeatureType;
 
-    void startAnalyzing();
+    void startClassification(const std::string &label_location);
+
+    void stopAnalyzing();
 
     void pushEvent(const Event<DataPointType> &e);
 
-    void analyzeOneEvent(const Event<DataPointType> &e);
+    void classifyOneEvent(const EventFeatures &e);
+
+    void join() {
+        if (this->runner.joinable())
+            this->runner.join();
+    }
+
+    ~DataAnalyzer() { this->stopAnalyzing(); }
 
 private:
-    static float calculateDistance(const EventFeatures &e1, const EventFeatures &e2);
+    void processOneEvent(const Event<DataPointType> &features);
 
+    static float calculateDistance(const EventFeatures &e1, const EventFeatures &e2);
 
 public:
     EventLabelManager<DataPointType> event_label_manager;
@@ -33,22 +44,45 @@ private:
     bool continue_analyzing = true;
     std::mutex events_mutex;
     std::condition_variable events_empty_variable;
-    std::vector<EventFeatures> events;
+    std::vector<Event<DataPointType>> events;
 
 };
 
 
 template<typename DataPointType> void DataAnalyzer<DataPointType>::pushEvent(const Event<DataPointType> &e) {
-    std::lock_guard<std::mutex> events_lock(events_mutex);
-    events.push_back(EventFeatures::fromEvent<DataPointType>(e));
+    {
+        std::unique_lock<std::mutex> events_lock(events_mutex);
+        events.push_back(e);
+    }
+    events_empty_variable.notify_one();
 }
 
+template<typename DataPointType> void DataAnalyzer<DataPointType>::processOneEvent(const Event<DataPointType> &event) {
+    std::cout << "processing event\n";
+    EventFeatures features = EventFeatures::fromEvent(event);
 
-template<typename DataPointType> void DataAnalyzer<DataPointType>::analyzeOneEvent(const Event<DataPointType> &e) {
+    if (!event_label_manager.findLabelAndAddEvent(event)) {
+        this->classifyOneEvent(features);
+    }
+}
+
+template<typename DataPointType> void DataAnalyzer<DataPointType>::classifyOneEvent(const EventFeatures &features) {
+    if(this->event_label_manager.labeled_events.empty()) {
+        return;
+    }
+    std::cout <<  "Classifying event:\n";
     const unsigned long k = 5;
+    using namespace std::placeholders;
     std::vector<dlib::sample_pair> out;
-    auto distance_function = std::bind(&DataAnalyzer<DataPointType>::calculateDistance, this);
+    auto distance_function = std::bind(&DataAnalyzer<DataPointType>::calculateDistance, _1, _2);
     dlib::find_k_nearest_neighbors(this->event_label_manager.labeled_events, distance_function, k, out);
+    std::cout << "Found " << out.size() << " nearest neighbors.\n";
+    std::cout << "Out Vector:\n";
+    for(auto x: out) {
+        std::cout << "index1: "  << x.index1() << "  index2: " << x.index2() << "  distance: " <<  x.distance() << std::endl;
+    }
+    std::cout << "\n\n";
+
 }
 
 
@@ -58,12 +92,36 @@ DataAnalyzer<DataPointType>::calculateDistance(const EventFeatures &e1, const Ev
                                 e2.feature_vector.end());
 }
 
-void DataAnalyzer::startAnalyzing() {
+template<typename DataPointType> void
+DataAnalyzer<DataPointType>::startClassification(const std::string &label_location) {
+    this->join();
+    this->continue_analyzing = true;
+    this->event_label_manager.loadLabelsFromFile(label_location);
+
     runner = std::thread([this]() {
-        while(this->continue_analyzing) {
+
+        while (true) {
+            // wait until an event is pushed
+            std::unique_lock<std::mutex> events_lock(this->events_mutex);
+            this->events_empty_variable.wait(events_lock, [this]() {
+                return !this->events.empty() || !this->continue_analyzing;
+            });
+            // if we dont want to analyze events anymore, quit
+            if (!this->continue_analyzing) {
+                break;
+            }
+            this->processOneEvent(this->events.back());
+            this->events.pop_back();
+
 
         }
     });
+}
+
+template<typename DataPointType> void DataAnalyzer<DataPointType>::stopAnalyzing() {
+    this->continue_analyzing = false;
+    this->events_empty_variable.notify_all();
+    this->join();
 
 }
 

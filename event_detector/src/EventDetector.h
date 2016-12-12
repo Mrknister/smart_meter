@@ -45,9 +45,9 @@ private:
 
     bool readBuffer(DataPointType *data_point);
 
-    bool detectEvent(DataPointType *prev_period, DataPointType *current_period);
+    bool detectEvent(DataPointType *tested_period);
 
-    void storeEvent(DataPointType *prev_period, DataPointType *current_period);
+    void storeEvent();
 
 public:
     EventStorage<DataPointType> storage;
@@ -63,8 +63,7 @@ private:
     DataManager<DataPointType> *data_manager;
     DynamicStreamMetaData::DataPointIdType data_points_read = -1;
     unsigned long buffer_length;
-    std::unique_ptr<DataPointType[]> electrical_period_buffer1;
-    std::unique_ptr<DataPointType[]> electrical_period_buffer2;
+    std::unique_ptr<DataPointType[]> electrical_period_buffer;
 
 
     std::thread runner;
@@ -86,26 +85,23 @@ EventDetector<EventDetectionStrategyType, DataPointType>::startAnalyzing(DataMan
     this->dynamic_meta_data = meta_data;
     this->power_meta_data = meta_data->getFixedPowerMetaData();
     this->event_detection_strategy = std::move(strategy);
+    this->data_points_read = this->power_meta_data.data_points_stored_before_event;
 
     this->buffer_length = power_meta_data.dataPointsPerPeriod();
 
-    // create buffers for the electrical periods
-    this->electrical_period_buffer1 = std::unique_ptr<DataPointType[]>(new DataPointType[buffer_length]);
-    this->electrical_period_buffer2 = std::unique_ptr<DataPointType[]>(new DataPointType[buffer_length]);
+    // create buffer for the electrical periods
+    this->electrical_period_buffer = std::unique_ptr<DataPointType[]>(new DataPointType[buffer_length]);
 
     runner = std::thread(&EventDetector<EventDetectionStrategyType, DataPointType>::run, this);
 }
 
 template<typename EventDetectionStrategyType, typename DataPointType> void
 EventDetector<EventDetectionStrategyType, DataPointType>::run() {
-    DataPointType *buffer_prev_period = this->electrical_period_buffer1.get();
-    DataPointType *buffer_current_period = this->electrical_period_buffer2.get();
-    this->readBuffer(buffer_prev_period);
+    DataPointType *buffer_current_period = this->electrical_period_buffer.get();
     while (this->readBuffer(buffer_current_period) && this->continue_analyzing) {
-        if (this->detectEvent(buffer_prev_period, buffer_current_period)) {
-            this->storeEvent(buffer_prev_period, buffer_current_period);
+        if (this->detectEvent(buffer_current_period)) {
+            this->storeEvent();
         }
-        std::swap(buffer_prev_period, buffer_current_period);
     }
 }
 
@@ -121,21 +117,19 @@ EventDetector<EventDetectionStrategyType, DataPointType>::readBuffer(DataPointTy
 }
 
 template<typename EventDetectionStrategyType, typename DataPointType> bool
-EventDetector<EventDetectionStrategyType, DataPointType>::detectEvent(DataPointType *prev_period,
-                                                                      DataPointType *current_period) {
-    if (this->event_detection_strategy.detectEvent(current_period, current_period + this->buffer_length,
+EventDetector<EventDetectionStrategyType, DataPointType>::detectEvent(DataPointType *tested_period) {
+    if (this->event_detection_strategy.detectEvent(tested_period, tested_period + this->buffer_length,
                                                    this->buffer_length)) {
         std::cout << "time: " << this->dynamic_meta_data->getDataPointTime(this->data_points_read) << std::endl;
+        auto t = boost::posix_time::time_from_string(this->power_meta_data.data_set_start_time);
 
         return true;
-
     }
     return false;
 }
 
 template<typename EventDetectionStrategyType, typename DataPointType> void
-EventDetector<EventDetectionStrategyType, DataPointType>::storeEvent(DataPointType *prev_period,
-                                                                     DataPointType *current_period) {
+EventDetector<EventDetectionStrategyType, DataPointType>::storeEvent() {
     // Make sure we want to store at least one period of data
     if (this->power_meta_data.data_points_stored_of_event <= 0 || this->stop_now) { return; }
 
@@ -147,9 +141,10 @@ EventDetector<EventDetectionStrategyType, DataPointType>::storeEvent(DataPointTy
 
     this->data_manager->popDataPoints(data_points.get(), data_points.get() + total_data_points_stored);
     EventMetaData meta_data(this->dynamic_meta_data->getDataPointTime(this->data_points_read),
-                            this->dynamic_meta_data->getFixedPowerMetaData().data_points_stored_before_event,
-                            this->dynamic_meta_data->getFixedPowerMetaData().data_points_stored_of_event);
+                            this->dynamic_meta_data->getFixedPowerMetaData());
     this->storage.storeEvent(data_points.get(), data_points.get() + total_data_points_stored, meta_data);
+
+    this->data_points_read += total_data_points_stored;
 }
 
 template<typename EventDetectionStrategyType, typename DataPointType> void

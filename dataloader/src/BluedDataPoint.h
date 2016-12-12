@@ -16,11 +16,11 @@ struct BluedDataPoint {
     constexpr BluedDataPoint(const BluedDataPoint &other) : x_value(other.x_value), current_a(other.current_a), current_b(other.current_b), voltage_a(other.voltage_a) {}
 
 
-    constexpr datum voltage() { return voltage_a; }
+    constexpr datum voltage() const { return voltage_a; }
 
     constexpr void voltage(datum v) { this->voltage_a = v; }
 
-    constexpr datum ampere() { return current_a; }
+    constexpr datum ampere() const{ return current_a; }
 
     constexpr void ampere(datum v) { this->current_a = v; }
     float x_value;

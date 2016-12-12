@@ -20,10 +20,10 @@ public:
     EventFeatures(EventMetaData meta_data, std::vector<FeatureType> f_vect) : event_meta_data(meta_data),
                                                                               feature_vector(std::move(f_vect)) {}
 
-    template<typename DataPointType> static EventFeatures fromEvent(Event<DataPointType> event);
+    template<typename DataPointType> static EventFeatures fromEvent(const Event<DataPointType> &event);
 };
 
-template<typename DataPointType> EventFeatures EventFeatures::fromEvent(Event<DataPointType> event) {
+template<typename DataPointType> EventFeatures EventFeatures::fromEvent(const Event<DataPointType> &event) {
     FeatureType rms = Algorithms::rootMeanSquare(event.event_data.begin(), event.event_data.end());
     std::vector<FeatureType> f_vect{rms};
     return EventFeatures(event.event_meta_data, f_vect);

@@ -7,6 +7,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <fstream>
 #include <algorithm>
+#include <boost/optional.hpp>
 
 struct DefaultDataPoint;
 
@@ -16,9 +17,9 @@ template<typename DataPointType = DefaultDataPoint> struct EventLabelManager {
         EventMetaData::TimeType time;
     };
 
-    void addEvent(const Event<DataPointType> &event);
+    bool findLabelAndAddEvent(const Event<DataPointType> &event);
 
-    void addLabeledEvent(const Event<DataPointType> &event);
+    void addLabeledEvent(const Event<DataPointType> &event, EventMetaData::LabelType label);
 
     void addUnlabeledEvent(const Event<DataPointType> &event);
 
@@ -33,21 +34,24 @@ template<typename DataPointType = DefaultDataPoint> struct EventLabelManager {
 
 };
 
-template<typename DataPointType> void EventLabelManager<DataPointType>::addEvent(const Event<DataPointType> &event) {
-    if (!event.event_meta_data.label.is_initialized()) {
-        auto opt_label = this->getEventLabel(event);
+template<typename DataPointType> bool
+EventLabelManager<DataPointType>::findLabelAndAddEvent(const Event<DataPointType> &event) {
+    boost::optional<EventMetaData::LabelType> opt_label = boost::none;
+    if (event.event_meta_data.label == boost::none) {
+        opt_label = this->getEventLabel(event);
     }
 
-    if (event.event_meta_data.label.is_initialized()) {
-        addLabeledEvent(event);
-    } else {
-        addUnlabeledEvent(event);
+    if (opt_label != boost::none) {
+        addLabeledEvent(event, opt_label.value());
+        return true;
     }
+    return false;
 }
 
 template<typename DataPointType> void
-EventLabelManager<DataPointType>::addLabeledEvent(const Event<DataPointType> &event) {
+EventLabelManager<DataPointType>::addLabeledEvent(const Event<DataPointType> &event, EventMetaData::LabelType label) {
     this->labeled_events.push_back(EventFeatures::fromEvent(event));
+    this->labeled_events.back().event_meta_data.label = label;
 }
 
 template<typename DataPointType> void
@@ -57,6 +61,10 @@ EventLabelManager<DataPointType>::addUnlabeledEvent(const Event<DataPointType> &
 
 template<typename DataPointType> boost::optional<EventMetaData::LabelType>
 EventLabelManager<DataPointType>::getEventLabel(const Event<DataPointType> &event) const {
+    if (labels.begin() == labels.end()) {
+        std::cout << "No labels loaded!\n";
+        return boost::none;
+    }
     LabelTimePair to_search;
     to_search.time = event.event_meta_data.event_time;
 
@@ -64,13 +72,24 @@ EventLabelManager<DataPointType>::getEventLabel(const Event<DataPointType> &even
         const EventMetaData::MSDurationType accepted_time_difference(5000);
         return l1.time + accepted_time_difference < l2.time;
     };
-    auto iter = std::upper_bound(labels.begin(), labels.end(), to_search, comparison_function);
-    if (!comparison_function(to_search,
-                             *iter)) { // if the value we have is not smaller than the upper bound, we found a label.
-        event.event_meta_data.label.optional(iter->label);
-        return true;
+
+    auto iter = std::lower_bound(labels.begin(), labels.end(), to_search, comparison_function);
+
+    // if the lower bound + margin is not bigger than the event time we found our label.
+    if (!comparison_function(to_search, *iter)) {
+        std::cout << "found a label: " << iter->label << " " << iter->time << "\n";
+        return iter->label;
     }
-    return false;
+
+    std::cout << "found no label\n";
+    if (iter != labels.begin()) {
+        std::cout << "closest match before event occurrence is: " << (iter - 1)->time <<  "\n";
+    }
+    if (iter != labels.end()) {
+        std::cout << "closest match after event occurrence is: " << iter->time << "\n";
+    }
+
+    return boost::none;
 }
 
 template<typename DataPointType> void EventLabelManager<DataPointType>::loadLabelsFromFile(std::string file_name) {

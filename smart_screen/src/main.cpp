@@ -36,14 +36,15 @@ int main(int argc, char **argv) {
     detect.startAnalyzing(&data_source.data_manager, &data_source.meta_data, DefaultEventDetectionStrategy(0.1));
 
     DataAnalyzer<BluedDataPoint> analyzer;
+    analyzer.startClassification("event_list.txt");
     DataAnalyzer<BluedDataPoint>* analyzer_ptr = &analyzer;
 
     detect.storage.setEventStorageCallback([analyzer_ptr](Event<BluedDataPoint>& e) {
-        std::cout << "Pushed!" << std::endl;
         analyzer_ptr->pushEvent(e);
     });
 
     detect.join();
+    analyzer.join();
 
 
     return 0;

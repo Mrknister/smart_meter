@@ -34,7 +34,7 @@ set(DATALOADER_SRCS
 
 
 find_package(SndFile REQUIRED)
-find_package(Boost 1.60 COMPONENTS system filesystem date_time serialization REQUIRED)
+find_package(Boost COMPONENTS system filesystem date_time serialization REQUIRED)
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 
 

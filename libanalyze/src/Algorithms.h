@@ -21,7 +21,7 @@ namespace Algorithms {
 
 
     template<typename IteratorType,typename IteratorType2, typename DataType = float> DataType
-    distance(IteratorType begin, const IteratorType end, IteratorType2 begin2, const IteratorType2 end2) {
+    euklideanDistance(IteratorType begin, const IteratorType end, IteratorType2 begin2, const IteratorType2 end2) {
         DataType result = 0.0;
         DataType n = end-begin;
         while (begin != end && begin2 != end2) {
@@ -32,6 +32,31 @@ namespace Algorithms {
         }
         return std::sqrt(result/n);
     }
+    template<typename IteratorType, typename DataType = float> DataType
+    mean(IteratorType begin, const IteratorType end) {
+        DataType result = 0.0;
+        DataType n = end-begin;
+
+        unsigned long count = 0;
+        result = std::accumulate(begin,end,DataType());
+        return std::sqrt(result/n);
+    }
+
+    template<typename IteratorType, typename DataType = float> DataType
+    variance(IteratorType begin, const IteratorType end) {
+        DataType result = 0.0;
+        DataType n = end-begin;
+        DataType iter_mean = mean(begin, end);
+
+
+        while (begin != end ) {
+            DataType diff =*begin - iter_mean;
+            result += diff*diff;
+            ++begin;
+        }
+        return result/n;
+    }
+
 }
 
 #endif //SMART_SCREEN_ALGORITHMS_H

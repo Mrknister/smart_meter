@@ -44,7 +44,7 @@ int main(int argc, char **argv) {
     });
 
     detect.join();
-    analyzer.join();
+    analyzer.stopAnalyzing();
 
 
     return 0;

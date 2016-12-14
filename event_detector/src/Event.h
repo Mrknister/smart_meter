@@ -14,6 +14,24 @@ public:
     std::vector<DataPointType> event_data;
     EventMetaData event_meta_data;
     typedef float DatumType;
+
+    constexpr typename std::vector<DataPointType>::const_iterator before_event_begin() const {
+        return event_data.begin();
+    }
+
+    constexpr typename std::vector<DataPointType>::const_iterator before_event_end() const {
+        return event_begin();
+
+    }
+
+    constexpr typename std::vector<DataPointType>::const_iterator event_begin() const {
+        return event_data.begin() + event_meta_data.power_meta_data.data_points_stored_before_event;
+    }
+
+    constexpr typename std::vector<DataPointType>::const_iterator event_end() const {
+        return event_data.end();
+    }
+
 };
 
 

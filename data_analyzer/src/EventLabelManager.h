@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <boost/optional.hpp>
 
+
 struct DefaultDataPoint;
 
 template<typename DataPointType = DefaultDataPoint> struct EventLabelManager {
@@ -17,13 +18,13 @@ template<typename DataPointType = DefaultDataPoint> struct EventLabelManager {
         EventMetaData::TimeType time;
     };
 
-    bool findLabelAndAddEvent(const Event<DataPointType> &event);
+    bool findLabelAndAddEvent(const EventFeatures &event);
 
-    void addLabeledEvent(const Event<DataPointType> &event, EventMetaData::LabelType label);
+    void addLabeledEvent(const EventFeatures &event, EventMetaData::LabelType label);
 
-    void addUnlabeledEvent(const Event<DataPointType> &event);
+    void addUnlabeledEvent(const EventFeatures &event);
 
-    boost::optional<EventMetaData::LabelType> getEventLabel(const Event<DataPointType> &event) const;
+    boost::optional<EventMetaData::LabelType> getEventLabel(const EventFeatures &event) const;
 
     void loadLabelsFromFile(std::string file_name);
 
@@ -32,10 +33,12 @@ template<typename DataPointType = DefaultDataPoint> struct EventLabelManager {
     std::vector<EventFeatures> unlabeled_events;
     std::vector<LabelTimePair> labels;
 
+
+
 };
 
 template<typename DataPointType> bool
-EventLabelManager<DataPointType>::findLabelAndAddEvent(const Event<DataPointType> &event) {
+EventLabelManager<DataPointType>::findLabelAndAddEvent(const EventFeatures &event) {
     boost::optional<EventMetaData::LabelType> opt_label = boost::none;
     if (event.event_meta_data.label == boost::none) {
         opt_label = this->getEventLabel(event);
@@ -49,18 +52,18 @@ EventLabelManager<DataPointType>::findLabelAndAddEvent(const Event<DataPointType
 }
 
 template<typename DataPointType> void
-EventLabelManager<DataPointType>::addLabeledEvent(const Event<DataPointType> &event, EventMetaData::LabelType label) {
-    this->labeled_events.push_back(EventFeatures::fromEvent(event));
+EventLabelManager<DataPointType>::addLabeledEvent(const EventFeatures &event, EventMetaData::LabelType label) {
+    this->labeled_events.push_back(event);
     this->labeled_events.back().event_meta_data.label = label;
 }
 
 template<typename DataPointType> void
-EventLabelManager<DataPointType>::addUnlabeledEvent(const Event<DataPointType> &event) {
-    this->labeled_events.push_back(EventFeatures::fromEvent(event));
+EventLabelManager<DataPointType>::addUnlabeledEvent(const EventFeatures &event) {
+    this->labeled_events.push_back(event);
 }
 
 template<typename DataPointType> boost::optional<EventMetaData::LabelType>
-EventLabelManager<DataPointType>::getEventLabel(const Event<DataPointType> &event) const {
+EventLabelManager<DataPointType>::getEventLabel(const EventFeatures &event) const {
     if (labels.begin() == labels.end()) {
         std::cout << "No labels loaded!\n";
         return boost::none;

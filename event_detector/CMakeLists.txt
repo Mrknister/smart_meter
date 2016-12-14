@@ -10,6 +10,8 @@ add_doxygen_target("event_detector_doc")
 find_package(Boost COMPONENTS system filesystem date_time REQUIRED)
 
 
+
+
 add_library(${PROJECT_NAME} STATIC
     src/EventDetector.h
     src/EventMetaData.h

@@ -9,6 +9,10 @@
 #include "EventFeatures.h"
 #include "Algorithms.h"
 #include "EventLabelManager.h"
+#include "ClassificationConfig.h"
+#include "FeatureExtractor.h"
+#include <nabo/nabo.h>
+#include <boost/optional/optional_io.hpp>
 
 
 struct DefaultDataPoint;
@@ -17,7 +21,7 @@ template<typename DataPointType = DefaultDataPoint> class DataAnalyzer {
 public:
     typedef float DataFeatureType;
 
-    void startClassification(const std::string &label_location);
+    void startClassification(const std::string &label_location, const ClassificationConfig &config = ClassificationConfig());
 
     void stopAnalyzing();
 
@@ -35,16 +39,41 @@ public:
 private:
     void processOneEvent(const Event<DataPointType> &features);
 
-    static float calculateDistance(const EventFeatures &e1, const EventFeatures &e2);
+    Eigen::VectorXf getFeatureVector(const EventFeatures &features);
+
+    void regenerateMatrix();
+
+    void addEventToNormalizedMatrix(const EventFeatures &features);
+
+    bool featureVectorIsInRange(const Eigen::VectorXf &vec);
+
+    void generateNormalizationVectors(const Eigen::MatrixXf &matrix);
+
+    Eigen::VectorXf generateMaxVector(const Eigen::MatrixXf &matrix);
+
+    Eigen::VectorXf generateMinVector(const Eigen::MatrixXf &matrix);
+
+    void pushToMatrix(const Eigen::VectorXf &vec);
+
+    Eigen::VectorXf normalizeEvent(Eigen::VectorXf vec);
+
+    void normalizeMatrix(Eigen::MatrixXf &matrix);
+
 
 public:
     EventLabelManager<DataPointType> event_label_manager;
 private:
+    ClassificationConfig classification_config;
+    FeatureExtractor feature_extractor;
     std::thread runner;
     bool continue_analyzing = true;
     std::mutex events_mutex;
     std::condition_variable events_empty_variable;
     std::vector<Event<DataPointType>> events;
+    Eigen::MatrixXf labeled_matrix;
+    Eigen::VectorXf normalization_mul_vector;
+    Eigen::VectorXf normalization_add_vector;
+
 
 };
 
@@ -59,44 +88,50 @@ template<typename DataPointType> void DataAnalyzer<DataPointType>::pushEvent(con
 
 template<typename DataPointType> void DataAnalyzer<DataPointType>::processOneEvent(const Event<DataPointType> &event) {
     std::cout << "processing event\n";
-    EventFeatures features = EventFeatures::fromEvent(event);
+    EventFeatures features =feature_extractor.fromEvent(event);
 
-    if (!event_label_manager.findLabelAndAddEvent(event)) {
+    if (event_label_manager.findLabelAndAddEvent(features)) {
+        this->addEventToNormalizedMatrix(features);
+    } else {
+
         this->classifyOneEvent(features);
     }
 }
 
 template<typename DataPointType> void DataAnalyzer<DataPointType>::classifyOneEvent(const EventFeatures &features) {
-    if(this->event_label_manager.labeled_events.empty()) {
+    const unsigned long k = 5;
+    if (this->event_label_manager.labeled_events.size() <= k) {
+        std::cout << "not enough elements in cloud yet: " << this->event_label_manager.labeled_events.size() << "\n";
         return;
     }
-    std::cout <<  "Classifying event:\n";
-    const unsigned long k = 5;
-    using namespace std::placeholders;
-    std::vector<dlib::sample_pair> out;
-    auto distance_function = std::bind(&DataAnalyzer<DataPointType>::calculateDistance, _1, _2);
-    dlib::find_k_nearest_neighbors(this->event_label_manager.labeled_events, distance_function, k, out);
-    std::cout << "Found " << out.size() << " nearest neighbors.\n";
-    std::cout << "Out Vector:\n";
-    for(auto x: out) {
-        std::cout << "index1: "  << x.index1() << "  index2: " << x.index2() << "  distance: " <<  x.distance() << std::endl;
+    using namespace Eigen;
+    using namespace Nabo;
+    std::cout << "Classifying event:\n";
+    std::unique_ptr<NNSearchF> nns(NNSearchF::createKDTreeLinearHeap(this->labeled_matrix));
+    VectorXi indices;
+    VectorXf dists2;
+
+    // Look for the 5 nearest neighbours of each query point,
+    // We do not want approximations but we want to sort by the distance,
+    indices.resize(k);
+    dists2.resize(k);
+    nns->knn(this->getFeatureVector(features), indices, dists2, k);
+
+    std::cout << "The labels of the closest neighbors are: " ;
+    for(int i= 0; i<k; ++i) {
+        std::cout << event_label_manager.labeled_events[indices(i)].event_meta_data.label;
     }
-    std::cout << "\n\n";
+    std::cout << std::endl;
 
 }
 
-
-template<typename DataPointType> float
-DataAnalyzer<DataPointType>::calculateDistance(const EventFeatures &e1, const EventFeatures &e2) {
-    return Algorithms::distance(e1.feature_vector.begin(), e1.feature_vector.end(), e2.feature_vector.begin(),
-                                e2.feature_vector.end());
-}
 
 template<typename DataPointType> void
-DataAnalyzer<DataPointType>::startClassification(const std::string &label_location) {
+DataAnalyzer<DataPointType>::startClassification(const std::string &label_location, const ClassificationConfig &config) {
     this->join();
     this->continue_analyzing = true;
     this->event_label_manager.loadLabelsFromFile(label_location);
+    feature_extractor.setConfig(config);
 
     runner = std::thread([this]() {
 
@@ -112,8 +147,6 @@ DataAnalyzer<DataPointType>::startClassification(const std::string &label_locati
             }
             this->processOneEvent(this->events.back());
             this->events.pop_back();
-
-
         }
     });
 }
@@ -123,6 +156,142 @@ template<typename DataPointType> void DataAnalyzer<DataPointType>::stopAnalyzing
     this->events_empty_variable.notify_all();
     this->join();
 
+}
+
+template<typename DataPointType> Eigen::VectorXf
+DataAnalyzer<DataPointType>::getFeatureVector(const EventFeatures &features) {
+    Eigen::VectorXf result;
+    result.resize(features.feature_vector.size());
+    int count = 0;
+    for (auto &f:features.feature_vector) {
+        result(count) = f;
+        ++count;
+    }
+    return result;
+}
+
+template<typename DataPointType> void
+DataAnalyzer<DataPointType>::addEventToNormalizedMatrix(const EventFeatures &features) {
+
+
+    Eigen::VectorXf feature_vec = getFeatureVector(features);
+    std::cout << "feature_vec: " << feature_vec<<"\n\n";
+    if (!featureVectorIsInRange(feature_vec)) {
+        std::cout << "\n\nIs not in range. Regenerating matrix:\n"<<std::endl;
+
+        regenerateMatrix();
+
+        std::cout << "normalization_add_vector:\n"<<this->normalization_add_vector << "\n";
+        std::cout << "normalization_mul_vector:\n"<<this->normalization_mul_vector << "\n";
+    } else {
+        std::cout << "Is in range\n"<<std::endl;
+        pushToMatrix(normalizeEvent(feature_vec));
+    }
+
+
+}
+
+template<typename DataPointType> bool DataAnalyzer<DataPointType>::featureVectorIsInRange(const Eigen::VectorXf &vec) {
+    if(this->normalization_add_vector.size() <= 0) {
+        return false;
+    }
+
+    Eigen::VectorXf v = this->normalizeEvent(Eigen::VectorXf(vec));
+    for(int i =0; i< v.size(); ++i) {
+        if(v(i) < -1.0 || v(i) > 1.0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+template<typename DataPointType> void
+DataAnalyzer<DataPointType>::generateNormalizationVectors(const Eigen::MatrixXf &matrix) {
+
+
+    Eigen::VectorXf max_vector;
+    Eigen::VectorXf min_vector;
+    min_vector = generateMinVector(matrix);
+    max_vector = generateMaxVector(matrix);
+    if(matrix.cols() == 1) {
+        normalization_mul_vector = min_vector;
+        normalization_mul_vector.setConstant(1.0);
+        normalization_add_vector = -min_vector;
+        return;
+    }
+
+    for (long i = 0; i < normalization_mul_vector.size(); ++i) {
+        normalization_mul_vector(i) = 2.0f / (max_vector(i) - min_vector(i));
+    }
+    for (long i = 0; i < normalization_mul_vector.size(); ++i) {
+        this->normalization_add_vector(i) = -1.0f * min_vector(i) * this->normalization_mul_vector(i) -1.0f;
+    }
+
+}
+
+template<typename DataPointType> Eigen::VectorXf
+DataAnalyzer<DataPointType>::generateMaxVector(const Eigen::MatrixXf &matrix) {
+    Eigen::VectorXf max = matrix.col(0);
+    for(long i = 1; i< matrix.cols(); ++i) {
+        for(long j = 0; j < matrix.rows(); ++j) {
+            if(matrix(j,i) > max(j)) {
+                max(j) = matrix(j,i);
+            }
+        }
+    }
+    return max;
+}
+
+
+template<typename DataPointType> Eigen::VectorXf
+DataAnalyzer<DataPointType>::generateMinVector(const Eigen::MatrixXf &matrix) {
+    Eigen::VectorXf min = matrix.col(0);
+    for(long i = 1; i< matrix.cols(); ++i) {
+        for(long j = 0; j < matrix.rows(); ++j) {
+            if(matrix(j,i) < min(j)) {
+                min(j) = matrix(j,i);
+            }
+        }
+    }
+    return min;
+}
+
+template<typename DataPointType> void DataAnalyzer<DataPointType>::pushToMatrix(const Eigen::VectorXf &vec) {
+    long rows = vec.size();
+    labeled_matrix.resize(rows, labeled_matrix.cols() + 1);
+    labeled_matrix.col(labeled_matrix.cols() - 1) = vec;
+}
+
+template<typename DataPointType> void DataAnalyzer<DataPointType>::regenerateMatrix() {
+    long rows = event_label_manager.labeled_events.back().feature_vector.size();
+    long cols = event_label_manager.labeled_events.size();
+
+    this->labeled_matrix.resize(rows, cols);
+    for (int i = 0; i < cols; ++i) {
+        Eigen::VectorXf vec = getFeatureVector(this->event_label_manager.labeled_events[i]);
+        this->labeled_matrix.col(i) = vec;
+    }
+    this->generateNormalizationVectors(this->labeled_matrix);
+    this->normalizeMatrix(this->labeled_matrix);
+}
+
+template<typename DataPointType> void DataAnalyzer<DataPointType>::normalizeMatrix(Eigen::MatrixXf &matrix) {
+    std::cout << "unnormalized matrix:\n"<<matrix << "\n\n";
+
+    for (long i = 0; i < matrix.cols(); ++i) {
+        matrix.col(i) = normalizeEvent(matrix.col(i));
+    }
+    std::cout << "normalized matrix:\n"<<matrix << "\n\n";
+
+}
+
+template<typename DataPointType> Eigen::VectorXf DataAnalyzer<DataPointType>::normalizeEvent(Eigen::VectorXf vec) {
+
+    for (long j = 0; j < vec.size(); ++j) {
+        vec(j) = vec(j) * this->normalization_mul_vector(j) + this->normalization_add_vector(j);
+    }
+    return vec;
 }
 
 

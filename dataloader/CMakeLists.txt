@@ -31,7 +31,6 @@ set(DATALOADER_SRCS
     src/DynamicStreamMetaData.cpp ../data_analyzer/src/DataAnalyzer.h ../energy_daq_interface/src/daq_interface.h)
 
 
-find_package(SndFile REQUIRED)
 find_package(Boost COMPONENTS system filesystem date_time serialization REQUIRED)
 find_package(HDF5 COMPONENTS CXX REQUIRED)
 

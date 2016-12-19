@@ -1,2 +1,0 @@
-/usr/bin/ar qc libevent_detector.a  CMakeFiles/event_detector.dir/src/dummy.cpp.o
-/usr/bin/ranlib libevent_detector.a

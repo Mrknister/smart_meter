@@ -66,7 +66,7 @@ EventLabelManager<DataPointType>::findLabelAndAddEvent(const EventFeatures &even
     }
 
     if (opt_label != boost::none) {
-        addLabeledEvent(event, opt_label.value());
+        addLabeledEvent(event, *opt_label);
         return true;
     }
     return false;

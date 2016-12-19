@@ -166,11 +166,11 @@ DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end) 
 
 template<typename DataPointType> template<typename IteratorType> IteratorType
 DataManager<DataPointType>::getDataPoints(IteratorType begin, IteratorType end, unsigned long offset) {
-    auto waiting_function = this->getQueueHasEnoughElementsWaiter(end - begin + offset);
+    auto waiting_function = this->getQueueHasEnoughElementsWaiter(static_cast<long>(end - begin) + offset);
     std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
     this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
     long pullable_elements = this->data_queue.size() - offset;
-    long elements_pulled = std::min(end - begin, pullable_elements);
+    long elements_pulled = std::min(static_cast<long>(end - begin), pullable_elements);
     begin = std::copy_n(data_queue.begin() + offset, elements_pulled, begin);
     return begin;
 }
@@ -229,7 +229,7 @@ DataManager<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) 
         this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
 
         long pullable_elements = this->data_queue.size();
-        long elements_pulled = std::min(end - begin, pullable_elements);
+        long elements_pulled = std::min(static_cast<long>(end - begin), pullable_elements);
         begin = std::copy_n(data_queue.begin(), elements_pulled, begin);
         this->removePointsFromQueue(elements_pulled);
         this->deque_overflow.notify_one();

@@ -5,11 +5,11 @@
 #include <memory>
 #include <vector>
 
-#include "FastFourierFeature.h"
 
 
 class FastFourierTransformCalculator {
 public:
+    typedef float DataPointType;
     FastFourierTransformCalculator() {
 
     }
@@ -19,40 +19,80 @@ public:
     }
 
     void setMaxDataSetSize(unsigned long _max_data_size) {
-        kiss_fft_buffer.resize(_max_data_size);
+        max_data_size =_max_data_size;
+        kiss_fft_buffer.resize(max_data_size);
         size_t lenmem = 1024 + (_max_data_size) * sizeof(kiss_fft_cpx);
         cfg_buffer.resize(lenmem);
-
     }
 
-    template<typename IteratorType> int calculate(IteratorType begin, IteratorType end);
+
+    template<typename IteratorType> std::vector<kiss_fft_cpx> calculateAmpereFFT(IteratorType begin, IteratorType end);
+    template<typename IteratorType> std::vector<kiss_fft_cpx>  calculateVoltageFFT(IteratorType begin, IteratorType end);
+
 
 private:
     std::vector<kiss_fft_cpx> kiss_fft_buffer;
+
+    unsigned long max_data_size = 0;
     std::vector<char> cfg_buffer;
 };
 
-template<typename IteratorType> int FastFourierTransformCalculator::calculate(IteratorType begin, IteratorType end) {
+template<typename IteratorType> std::vector<kiss_fft_cpx> FastFourierTransformCalculator::calculateAmpereFFT(IteratorType begin,
+                                                                                       IteratorType end) {
+
+    unsigned long points_to_compute = end-begin;
+    if(points_to_compute > max_data_size) {
+        this->setMaxDataSetSize(points_to_compute);
+    }
+    std::vector<kiss_fft_cpx> kiss_fft_result(points_to_compute);
+
+
 
     size_t lenmem = this->cfg_buffer.size();
     kiss_fft_cfg cfg = kiss_fft_alloc(static_cast<int>(kiss_fft_buffer.size()), 0,
                                       reinterpret_cast<void *>(cfg_buffer.data()), &lenmem);
-    FastFourierFeature fft_f(end-begin);
 
 
 
     int counter = 0;
-    while(begin!=end && counter < this->kiss_fft_buffer.size()) {
+    while(begin!=end && counter < kiss_fft_buffer.size()) {
         kiss_fft_buffer[counter].i = 0;
         kiss_fft_buffer[counter].r = begin->ampere();
         ++begin;
         ++counter;
     }
 
-    kiss_fft(cfg, kiss_fft_buffer.data(), fft_f.getBuffer());
-
-    return 1;
+    kiss_fft(cfg, kiss_fft_buffer.data(), kiss_fft_result.data());
+    return kiss_fft_result;
 }
 
+template<typename IteratorType> std::vector<kiss_fft_cpx> FastFourierTransformCalculator::calculateVoltageFFT(IteratorType begin,
+                                                                                                             IteratorType end) {
+
+    unsigned long points_to_compute = end-begin;
+    if(points_to_compute > max_data_size) {
+        this->setMaxDataSetSize(points_to_compute);
+    }
+    std::vector<kiss_fft_cpx> kiss_fft_result(points_to_compute);
+
+
+
+    size_t lenmem = this->cfg_buffer.size();
+    kiss_fft_cfg cfg = kiss_fft_alloc(static_cast<int>(kiss_fft_buffer.size()), 0,
+                                      reinterpret_cast<void *>(cfg_buffer.data()), &lenmem);
+
+
+
+    int counter = 0;
+    while(begin!=end && counter < kiss_fft_buffer.size()) {
+        kiss_fft_buffer[counter].i = 0;
+        kiss_fft_buffer[counter].r = begin->voltage();
+        ++begin;
+        ++counter;
+    }
+
+    kiss_fft(cfg, kiss_fft_buffer.data(), kiss_fft_result.data());
+    return kiss_fft_result;
+}
 
 #endif //SMART_SCREEN_FOURIERTRANSFORMCALCULATOR_H

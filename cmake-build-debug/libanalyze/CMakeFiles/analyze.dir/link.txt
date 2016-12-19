@@ -1,0 +1,2 @@
+/usr/bin/ar qc libanalyze.a  CMakeFiles/analyze.dir/src/dummy.cpp.o
+/usr/bin/ranlib libanalyze.a

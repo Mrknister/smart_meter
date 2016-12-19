@@ -1,0 +1,14 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src/ClassificationConfig.cpp
+ClassificationConfig.h
+/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src/ClassificationConfig.h
+
+/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src/ClassificationConfig.h
+

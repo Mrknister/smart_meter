@@ -121,7 +121,6 @@ EventDetector<EventDetectionStrategyType, DataPointType>::detectEvent(DataPointT
     if (this->event_detection_strategy.detectEvent(tested_period, tested_period + this->buffer_length,
                                                    this->buffer_length)) {
         std::cout << "time: " << this->dynamic_meta_data->getDataPointTime(this->data_points_read) << std::endl;
-        auto t = boost::posix_time::time_from_string(this->power_meta_data.data_set_start_time);
 
         return true;
     }

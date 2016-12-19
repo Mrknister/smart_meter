@@ -18,7 +18,7 @@
 #include "DataManager.h"
 #include "PowerMetaData.h"
 #include "BluedInputSource.h"
-#include "BluedHdf5Converter.h"
+#include "../../blued_converter/src/BluedHdf5Converter.h"
 #include "BluedHdf5InputSource.h"
 
 BOOST_AUTO_TEST_SUITE(data_loader_suite)

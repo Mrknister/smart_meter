@@ -18,8 +18,6 @@ include_directories("${EXTERNAL_DEPENDENCIES_DIR}/inih")
 set(DATALOADER_SRCS
     src/BluedDataPoint.h
     src/BluedDefinitions.h
-    src/BluedHdf5Converter.cpp
-    src/BluedHdf5Converter.h
     src/BluedHdf5InputSource.cpp
     src/BluedHdf5InputSource.h
     src/BluedInputSource.cpp
@@ -30,7 +28,7 @@ set(DATALOADER_SRCS
     src/PowerMetaData.h
     src/BluedToDefaultDataManagerAdapter.h
     src/DynamicStreamMetaData.h
-    src/DynamicStreamMetaData.cpp ../data_analyzer/src/DataAnalyzer.h)
+    src/DynamicStreamMetaData.cpp ../data_analyzer/src/DataAnalyzer.h ../energy_daq_interface/src/daq_interface.h)
 
 
 find_package(SndFile REQUIRED)

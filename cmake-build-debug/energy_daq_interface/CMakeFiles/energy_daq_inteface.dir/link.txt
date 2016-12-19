@@ -1,0 +1,2 @@
+/usr/bin/ar qc libenergy_daq_inteface.a  CMakeFiles/energy_daq_inteface.dir/src/daq_interface.cpp.o
+/usr/bin/ranlib libenergy_daq_inteface.a

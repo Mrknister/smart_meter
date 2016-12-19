@@ -8,7 +8,7 @@ set(ANALYZE_SOURCES
     src/dummy.cpp
     src/Algorithms.h
     src/FastFourierTransformCalculator.h
-    src/FastFourierFeature.h)
+    src/HarmonicsFeature.h)
 
 
 add_library(analyze ${ANALYZE_SOURCES})

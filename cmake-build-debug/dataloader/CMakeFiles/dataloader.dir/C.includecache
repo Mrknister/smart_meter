@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/jan/Dropbox/Projects/C++/smart_screen/external/inih/ini.c
+stdio.h
+-
+ctype.h
+-
+string.h
+-
+ini.h
+/home/jan/Dropbox/Projects/C++/smart_screen/external/inih/ini.h
+stdlib.h
+-
+
+/home/jan/Dropbox/Projects/C++/smart_screen/external/inih/ini.h
+stdio.h
+-
+

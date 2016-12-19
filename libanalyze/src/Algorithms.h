@@ -9,11 +9,22 @@
 namespace Algorithms {
 
     template<typename IteratorType, typename DataType = float> DataType
-    rootMeanSquare(IteratorType begin, const IteratorType end) {
+    rootMeanSquareOfAmpere(IteratorType begin, const IteratorType end) {
         DataType result = 0.0;
         DataType n = end-begin;
         while (begin != end) {
             result += begin->ampere() * begin->ampere();
+            ++begin;
+        }
+        return std::sqrt(result/n);
+    }
+
+    template<typename IteratorType, typename DataType = float> DataType
+    rootMeanSquare(IteratorType begin, const IteratorType end) {
+        DataType result = 0.0;
+        DataType n = end-begin;
+        while (begin != end) {
+            result += *begin * *begin;
             ++begin;
         }
         return std::sqrt(result/n);
@@ -37,15 +48,13 @@ namespace Algorithms {
         DataType result = 0.0;
         DataType n = end-begin;
 
-        unsigned long count = 0;
-        result = std::accumulate(begin,end,DataType());
-        return std::sqrt(result/n);
+        result = std::accumulate(begin,end,0.f);
+        return result/n;
     }
 
     template<typename IteratorType, typename DataType = float> DataType
     variance(IteratorType begin, const IteratorType end) {
         DataType result = 0.0;
-        DataType n = end-begin;
         DataType iter_mean = mean(begin, end);
 
 
@@ -54,7 +63,7 @@ namespace Algorithms {
             result += diff*diff;
             ++begin;
         }
-        return result/n;
+        return result;
     }
 
 }

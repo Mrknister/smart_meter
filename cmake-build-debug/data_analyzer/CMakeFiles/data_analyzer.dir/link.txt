@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdata_analyzer.a  CMakeFiles/data_analyzer.dir/src/ClassificationConfig.cpp.o
+/usr/bin/ranlib libdata_analyzer.a

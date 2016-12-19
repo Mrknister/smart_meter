@@ -21,6 +21,7 @@ void DynamicStreamMetaData::setFixedPowerMetaData(PowerMetaData fixed_meta_data)
     std::lock_guard<std::mutex> time_lock(sync_mutex);
     this->power_meta_data = fixed_meta_data;
 
+
 }
 
 PowerMetaData DynamicStreamMetaData::getFixedPowerMetaData() const {

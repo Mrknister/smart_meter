@@ -19,7 +19,7 @@ add_library(${PROJECT_NAME} STATIC
     src/DefaultEventDetectionStrategy.h
     src/dummy.cpp
     src/Event.h
-    src/EventFeatures.cpp ../data_analyzer/src/EventFeatures.h)
+    ../data_analyzer/src/EventFeatures.h)
 
 target_link_libraries(${PROJECT_NAME} libanalyze)
 target_link_libraries(${PROJECT_NAME} dataloader)

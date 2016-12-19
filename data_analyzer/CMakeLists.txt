@@ -4,9 +4,6 @@ project(data_analyzer)
 set(PROJECT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 include(${CMAKE_SOURCE_DIR}/cmake/Scripts/AddDoxygenTarget.cmake)
 
-# include dlib as in project dependency
-find_package(DLib REQUIRED)
-add_doxygen_target("data_analyzer_doc")
 
 # include libnabo
 include(${EXTERNAL_DEPENDENCIES_DIR}/libnabo/build/libnaboConfig.cmake)

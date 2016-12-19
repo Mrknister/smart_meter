@@ -1,0 +1,106 @@
+/opt/clion/bin/cmake/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/jan/Dropbox/Projects/C++/smart_screen
+External dependency directory: /home/jan/Dropbox/Projects/C++/smart_screen/external
+Using gcc for building the project
+Building with the following compiler Flags:  -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow  -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused -std=c++14  -g
+-- Found libsndfile: /usr/lib64/libsndfile.so
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  dataloader/CMakeLists.txt:35 (find_package)
+
+
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  dataloader/CMakeLists.txt:35 (find_package)
+
+
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  dataloader/CMakeLists.txt:35 (find_package)
+
+
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  dataloader/CMakeLists.txt:35 (find_package)
+
+
+-- Boost version: 1.62.0
+-- Found the following Boost libraries:
+--   system
+--   filesystem
+--   date_time
+--   serialization
+-- HDF5: Using hdf5 compiler wrapper to determine CXX configuration
+Boost Libraries linked to dataloader: /usr/lib64/libboost_system.so;/usr/lib64/libboost_filesystem.so;/usr/lib64/libboost_date_time.so;/usr/lib64/libboost_serialization.so
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  event_detector/CMakeLists.txt:10 (find_package)
+
+
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  event_detector/CMakeLists.txt:10 (find_package)
+
+
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  event_detector/CMakeLists.txt:10 (find_package)
+
+
+-- Boost version: 1.62.0
+-- Found the following Boost libraries:
+--   system
+--   filesystem
+--   date_time
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  test/CMakeLists.txt:1 (find_package)
+
+
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  test/CMakeLists.txt:1 (find_package)
+
+
+CMake Warning at /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:743 (message):
+  Imported targets not available for Boost version 106200
+Call Stack (most recent call first):
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:842 (_Boost_COMPONENT_DEPENDENCIES)
+  /opt/clion/bin/cmake/share/cmake-3.6/Modules/FindBoost.cmake:1395 (_Boost_MISSING_DEPENDENCIES)
+  test/CMakeLists.txt:1 (find_package)
+
+
+-- Boost version: 1.62.0
+-- Found the following Boost libraries:
+--   system
+--   filesystem
+--   unit_test_framework
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug

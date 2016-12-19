@@ -14,10 +14,10 @@ public:
     template<typename IteratorType> bool
     detectEvent(IteratorType begin, IteratorType end, unsigned int num_data_points_per_period) {
         if (previous_rms == -100000) {
-            previous_rms = Algorithms::rootMeanSquare(begin, end);
+            previous_rms = Algorithms::rootMeanSquareOfAmpere(begin, end);
             return false;
         }
-        float current_rms = Algorithms::rootMeanSquare(begin, end);
+        float current_rms = Algorithms::rootMeanSquareOfAmpere(begin, end);
 
         if (current_rms - threshold > previous_rms) {
             previous_rms = current_rms;

@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdataloader.a  CMakeFiles/dataloader.dir/src/BluedHdf5InputSource.cpp.o CMakeFiles/dataloader.dir/src/BluedInputSource.cpp.o CMakeFiles/dataloader.dir/src/PowerMetaData.cpp.o CMakeFiles/dataloader.dir/src/DynamicStreamMetaData.cpp.o CMakeFiles/dataloader.dir/__/external/inih/ini.c.o
+/usr/bin/ranlib libdataloader.a

@@ -1,0 +1,965 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="smart_screen"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\blued_converter\;CMake Files\data_analyzer\;CMake Files\cmake\;CMake Files\cmake\Scripts\;CMake Files\cmake\Modules\;CMake Files\external\;CMake Files\external\libnabo\;CMake Files\external\libnabo\build\;CMake Files\dataloader\;CMake Files\dataloader\doc\;CMake Files\energy_daq\;CMake Files\energy_daq_interface\;CMake Files\event_detector\;CMake Files\event_detector\doc\;CMake Files\libanalyze\;CMake Files\libanalyze\doc\;CMake Files\smart_screen\;CMake Files\test\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="test">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 test"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="doc">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 doc"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="libanalyze_doc">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 libanalyze_doc"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="kiss_fft">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/libkiss_fft.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 kiss_fft"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="kiss_fft/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/libkiss_fft.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 kiss_fft/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="analyze">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/libanalyze.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 analyze"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="analyze/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/libanalyze.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 analyze/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/libanalyze/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="dataloader">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/libdataloader.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/inih"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 dataloader"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="dataloader/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/libdataloader.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/inih"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 dataloader/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="dataloader_doc">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 dataloader_doc"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="event_detector">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/libevent_detector.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 event_detector"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="event_detector/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/libevent_detector.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 event_detector/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="event_detector_doc">
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 event_detector_doc"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="data_analyzer">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/libdata_analyzer.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/Makefile&quot;  VERBOSE=1 data_analyzer"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="data_analyzer/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/libdata_analyzer.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/Makefile&quot;  VERBOSE=1 data_analyzer/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/data_analyzer/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="smart_screen">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/smart_screen" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/Makefile&quot;  VERBOSE=1 smart_screen"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="smart_screen/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/smart_screen" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/Makefile&quot;  VERBOSE=1 smart_screen/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/smart_screen/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="blued_converter">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/blued_converter" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/Makefile&quot;  VERBOSE=1 blued_converter"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="blued_converter/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/blued_converter" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/Makefile&quot;  VERBOSE=1 blued_converter/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/blued_converter/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="energy_daq_inteface">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/libenergy_daq_inteface.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq_interface/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/Makefile&quot;  VERBOSE=1 energy_daq_inteface"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="energy_daq_inteface/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/libenergy_daq_inteface.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq_interface/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/Makefile&quot;  VERBOSE=1 energy_daq_inteface/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq_interface/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="energy_daq">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/energy_daq" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/libftdi1"/>
+					<Add directory="/usr/include/libusb-1.0"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq_interface/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/Makefile&quot;  VERBOSE=1 energy_daq"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="energy_daq/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/energy_daq" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/usr/include/libftdi1"/>
+					<Add directory="/usr/include/libusb-1.0"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq_interface/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/Makefile&quot;  VERBOSE=1 energy_daq/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/energy_daq/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Test">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DBOOST_TEST_DYN_LINK"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 Test"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="Test/fast">
+				<Option output="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Test" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DBOOST_TEST_DYN_LINK"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/dataloader"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/event_detector"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src"/>
+					<Add directory="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo"/>
+					<Add directory="/usr/include/eigen3"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/x86_64-pc-linux-gnu"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/../../../../include/c++/6.2.1/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/x86_64-pc-linux-gnu/6.2.1/include-fixed"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 Test/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/jan/Dropbox/Projects/C++/smart_screen/cmake-build-debug/test/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/blued_converter/src/BluedHdf5Converter.cpp">
+			<Option target="blued_converter"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/blued_converter/src/BluedHdf5Converter.h">
+			<Option target="blued_converter"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/blued_converter/src/main.cpp">
+			<Option target="blued_converter"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src/ClassificationConfig.cpp">
+			<Option target="data_analyzer"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src/ClassificationConfig.h">
+			<Option target="data_analyzer"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src/DataAnalyzer.h">
+			<Option target="dataloader"/>
+			<Option target="data_analyzer"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src/EventFeatures.h">
+			<Option target="event_detector"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src/EventLabelManager.h">
+			<Option target="data_analyzer"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/src/FeatureExtractor.h">
+			<Option target="data_analyzer"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/BluedDataPoint.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/BluedDefinitions.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/BluedHdf5InputSource.cpp">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/BluedHdf5InputSource.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/BluedInputSource.cpp">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/BluedInputSource.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/BluedToDefaultDataManagerAdapter.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/DataManager.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/DefaultDataPoint.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/DynamicStreamMetaData.cpp">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/DynamicStreamMetaData.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/PowerMetaData.cpp">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/src/PowerMetaData.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq/src/main.c">
+			<Option target="energy_daq"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq_interface/src/MEDALDataPoint.h">
+			<Option target="energy_daq_inteface"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq_interface/src/daq_interface.cpp">
+			<Option target="energy_daq_inteface"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq_interface/src/daq_interface.h">
+			<Option target="dataloader"/>
+			<Option target="energy_daq_inteface"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src/DefaultEventDetectionStrategy.h">
+			<Option target="event_detector"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src/Event.h">
+			<Option target="event_detector"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src/EventDetector.h">
+			<Option target="event_detector"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src/EventMetaData.h">
+			<Option target="event_detector"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src/EventStorage.h">
+			<Option target="event_detector"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/src/dummy.cpp">
+			<Option target="event_detector"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/external/inih/ini.c">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/external/inih/ini.h">
+			<Option target="dataloader"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft/kiss_fft.c">
+			<Option target="kiss_fft"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/external/kiss_fft/kiss_fft.h">
+			<Option target="kiss_fft"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src/Algorithms.h">
+			<Option target="analyze"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src/FastFourierTransformCalculator.h">
+			<Option target="analyze"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src/HarmonicsFeature.h">
+			<Option target="analyze"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/src/dummy.cpp">
+			<Option target="analyze"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/smart_screen/src/main.cpp">
+			<Option target="smart_screen"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/test/src/DataLoaderTest.cpp">
+			<Option target="Test"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/test/src/DataLoaderTest.h">
+			<Option target="Test"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/test/src/EventStorageTest.cpp">
+			<Option target="Test"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/test/src/EventStorageTest.h">
+			<Option target="Test"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/test/src/LibAnalyzeTest.cpp">
+			<Option target="Test"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/test/src/LibAnalyzeTest.h">
+			<Option target="Test"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/test/src/test.cpp">
+			<Option target="Test"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/blued_converter/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\blued_converter\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/blued_converter/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\blued_converter\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\data_analyzer\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/data_analyzer/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\data_analyzer\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Scripts/AddDoxygenTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\Scripts\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Scripts/AddDoxygenTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\Scripts\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Scripts/AddDoxygenTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\Scripts\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Scripts/AddDoxygenTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\Scripts\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Scripts/AddDoxygenTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\Scripts\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Scripts/AddDoxygenTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\Scripts\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Scripts/AddDoxygenTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\Scripts\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Scripts/AddDoxygenTarget.cmake">
+			<Option virtualFolder="CMake Files\cmake\Scripts\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Modules/FindSndFile.cmake">
+			<Option virtualFolder="CMake Files\cmake\Modules\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/cmake/Modules/FindSndFile.cmake">
+			<Option virtualFolder="CMake Files\cmake\Modules\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo/build/libnaboConfig.cmake">
+			<Option virtualFolder="CMake Files\external\libnabo\build\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/external/libnabo/build/libnaboConfig.cmake">
+			<Option virtualFolder="CMake Files\external\libnabo\build\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\dataloader\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\dataloader\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/doc/Doxyfile.in">
+			<Option virtualFolder="CMake Files\dataloader\doc\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/dataloader/doc/Doxyfile.in">
+			<Option virtualFolder="CMake Files\dataloader\doc\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\energy_daq\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\energy_daq\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq_interface/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\energy_daq_interface\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/energy_daq_interface/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\energy_daq_interface\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\event_detector\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\event_detector\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/doc/Doxyfile.in">
+			<Option virtualFolder="CMake Files\event_detector\doc\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/event_detector/doc/Doxyfile.in">
+			<Option virtualFolder="CMake Files\event_detector\doc\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libanalyze\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\libanalyze\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/doc/Doxyfile.in">
+			<Option virtualFolder="CMake Files\libanalyze\doc\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/libanalyze/doc/Doxyfile.in">
+			<Option virtualFolder="CMake Files\libanalyze\doc\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/smart_screen/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\smart_screen\"/>
+		</Unit>
+		<Unit filename="/home/jan/Dropbox/Projects/C++/smart_screen/test/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\test\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

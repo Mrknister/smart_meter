@@ -15,6 +15,8 @@ set(INIH_SOURCES
     )
 include_directories("${EXTERNAL_DEPENDENCIES_DIR}/inih")
 
+
+
 set(DATALOADER_SRCS
     src/BluedDataPoint.h
     src/BluedDefinitions.h
@@ -28,7 +30,7 @@ set(DATALOADER_SRCS
     src/PowerMetaData.h
     src/BluedToDefaultDataManagerAdapter.h
     src/DynamicStreamMetaData.h
-    src/DynamicStreamMetaData.cpp ../data_analyzer/src/DataAnalyzer.h ../energy_daq_interface/src/daq_interface.h)
+    src/DynamicStreamMetaData.cpp)
 
 
 find_package(Boost COMPONENTS system filesystem date_time serialization REQUIRED)

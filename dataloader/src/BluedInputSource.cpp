@@ -11,8 +11,7 @@ void BluedInputSource::startReading(const std::string &file_path) {
 }
 
 
-void
-BluedInputSource::startReading(const std::string &file_path, std::function<void()> callback) {
+void BluedInputSource::startReading(const std::string &file_path, std::function<void()> callback) {
     this->continue_reading = true;
     auto runner_function = std::bind(&BluedInputSource::run, this, file_path, callback);
     this->runner = std::thread(runner_function);
@@ -35,8 +34,7 @@ void BluedInputSource::stopNow() {
 
 }
 
-void BluedInputSource::readWholeLocation(const std::string &directory,
-                                         std::function<void()> callback) {
+void BluedInputSource::readWholeLocation(const std::string &directory, std::function<void()> callback) {
     using namespace boost::filesystem;
     path p(directory);
     std::vector<std::string> locations;
@@ -44,10 +42,13 @@ void BluedInputSource::readWholeLocation(const std::string &directory,
         if (!is_directory(p)) {
             std::cerr << "Please Provide a directory";
         }
-        for (directory_entry &x : recursive_directory_iterator(p)) {
-            bool is_data_file = boost::algorithm::ends_with(x.path().filename().c_str(), "txt");
-            if (is_data_file)
-                locations.push_back(x.path().string());
+        recursive_directory_iterator begin(p), endM
+        while (begin != end) {
+            bool is_data_file = boost::algorithm::ends_with(begin->path().filename().c_str(), "txt");
+            if (is_data_file) {
+                locations.push_back(begin->path().string());
+            }
+            ++begin;
         }
 
     } catch (const filesystem_error &ex) {
@@ -57,12 +58,11 @@ void BluedInputSource::readWholeLocation(const std::string &directory,
     std::sort(locations.begin(), locations.end());
 
     this->continue_reading = true;
-    auto runner_function = std::bind(&BluedInputSource::runLocations, this, locations,callback);
+    auto runner_function = std::bind(&BluedInputSource::runLocations, this, locations, callback);
     this->runner = std::thread(runner_function);
 }
 
-void BluedInputSource::runLocations(std::vector<std::string> locations,
-                                    std::function<void()> callback) {
+void BluedInputSource::runLocations(std::vector<std::string> locations, std::function<void()> callback) {
     this->data_manager.restartStreaming();
     for (auto &file_path : locations) {
         if (!this->continue_reading) {
@@ -84,7 +84,7 @@ void BluedInputSource::run(const std::string &file_path, std::function<void()> c
 
 BluedDataPoint BluedInputSource::matchLine(std::ifstream &input_stream) {
     std::string line;
-    
+
     float x_value;
     input_stream >> x_value;
     input_stream.ignore(50, ',');
@@ -105,7 +105,7 @@ BluedDataPoint BluedInputSource::matchLine(std::ifstream &input_stream) {
     // skip to next line
     input_stream.ignore(50, '\n');
 
-    return BluedDataPoint(x_value, current_a, current_b ,voltage_a);
+    return BluedDataPoint(x_value, current_a, current_b, voltage_a);
 }
 
 bool BluedInputSource::readOnce(std::ifstream &input_stream) {

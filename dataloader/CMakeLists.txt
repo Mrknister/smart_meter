@@ -39,14 +39,13 @@ find_package(HDF5 COMPONENTS CXX REQUIRED)
 
 add_library(${PROJECT_NAME} ${DATALOADER_SRCS} ${INIH_SOURCES})
 
-target_include_directories(${PROJECT_NAME}
+target_include_directories(${PROJECT_NAME} SYSTEM
     PUBLIC
     "${dataloader_INCLUDE_DIR}"
     ${Boost_INCLUDE_DIRS}
     ${HDF5_INCLUDE_DIR}
     )
 
-target_include_directories(${PROJECT_NAME} SYSTEM
 
 target_link_libraries(${PROJECT_NAME} -lm -lpthread)
 target_link_libraries(${PROJECT_NAME}

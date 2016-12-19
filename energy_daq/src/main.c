@@ -372,8 +372,8 @@ bool check_trigger_id(uint8_t *buffer) {
     // because we are lazy we also put the packet into the data_queue here
     int channels[NUMBER_OF_MEDAL_CHANNELS] = {0}; // medal channels + voltage
 
-
-    for (int i = 2; i < 14; ++i) {
+    int i = 2;
+    for (; i < 14; ++i) {
         for (int j = 0; j < NUMBER_OF_MEDAL_CHANNELS ; j++) {
             channels[j] <<= 1;
             channels[j] |= (buffer[i] & (1 << j+1)) >= 1;

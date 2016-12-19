@@ -46,6 +46,7 @@ target_include_directories(${PROJECT_NAME}
     ${HDF5_INCLUDE_DIR}
     )
 
+target_include_directories(${PROJECT_NAME} SYSTEM
 
 target_link_libraries(${PROJECT_NAME} -lm -lpthread)
 target_link_libraries(${PROJECT_NAME}

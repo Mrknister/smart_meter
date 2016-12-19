@@ -42,7 +42,7 @@ void BluedInputSource::readWholeLocation(const std::string &directory, std::func
         if (!is_directory(p)) {
             std::cerr << "Please Provide a directory";
         }
-        recursive_directory_iterator begin(p), endM
+        recursive_directory_iterator begin(p), end;
         while (begin != end) {
             bool is_data_file = boost::algorithm::ends_with(begin->path().filename().c_str(), "txt");
             if (is_data_file) {

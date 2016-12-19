@@ -374,7 +374,8 @@ bool check_trigger_id(uint8_t *buffer) {
 
     int i = 2;
     for (; i < 14; ++i) {
-        for (int j = 0; j < NUMBER_OF_MEDAL_CHANNELS ; j++) {
+        int j = 0;
+        for (; j < NUMBER_OF_MEDAL_CHANNELS ; j++) {
             channels[j] <<= 1;
             channels[j] |= (buffer[i] & (1 << j+1)) >= 1;
 
@@ -382,13 +383,13 @@ bool check_trigger_id(uint8_t *buffer) {
     }
 
     float calibrated_channels[NUMBER_OF_MEDAL_CHANNELS];
-    calibrated_channels[0] = ((float) channels[0]);// * 0.015151515f; //  1 / 0.066 V/A * (4.096 / 4096)
-    calibrated_channels[1] = ((float) channels[1]);// * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[2] = ((float) channels[2]);// * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[3] = ((float) channels[3]);// * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[4] = ((float) channels[4]);// * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[5] = ((float) channels[5]);// * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[6] = ((float) channels[6]);// *0.2853f; // 230V / (6V * 1.478 estimated IdleVolt) * (100000Ohm + 10000Ohm) / 10000Ohm) * (4.096 / 4096)
+    calibrated_channels[0] = ((float) channels[0]) * 0.015151515f; //  1 / 0.066 V/A * (4.096 / 4096)
+    calibrated_channels[1] = ((float) channels[1]) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[2] = ((float) channels[2]) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[3] = ((float) channels[3]) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[4] = ((float) channels[4]) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[5] = ((float) channels[5]) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[6] = ((float) channels[6]) *0.2853f; // 230V / (6V * 1.478 estimated IdleVolt) * (100000Ohm + 10000Ohm) / 10000Ohm) * (4.096 / 4096)
     addMEDALDataPoint(calibrated_channels[0],calibrated_channels[1],calibrated_channels[2],calibrated_channels[3],calibrated_channels[4],calibrated_channels[5],calibrated_channels[6]);
 
     return true;

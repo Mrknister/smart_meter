@@ -12,11 +12,11 @@ struct MEDALDataPoint {
     datum volts;
     datum currents[NUMBER_OF_MEDAL_CHANNELS];
 
-    constexpr datum voltage() const { return volts; }
+    datum voltage() const { return volts; }
 
-    constexpr void voltage(datum v) { this->volts = v; }
+    void voltage(datum v) { this->volts = v; }
 
-    constexpr datum ampere() const { return currents[0]; }
+    datum ampere() const { return currents[0]; }
 
     void ampere(datum a) {
         throw std::exception(); // not to be used, u dimwit
@@ -36,6 +36,7 @@ namespace boost {
             ar & data_point.currents[4];
             ar & data_point.currents[5];
         }
+
         template<class Archive> void serialize(Archive &ar, Event<MEDALDataPoint> &event, const unsigned int version) {
             ar & event.event_data;
             ar & event.event_meta_data;

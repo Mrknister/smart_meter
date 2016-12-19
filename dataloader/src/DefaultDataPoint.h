@@ -9,18 +9,18 @@
 struct DefaultDataPoint {
     typedef float datum;
 
-    constexpr DefaultDataPoint(float volt_value, float ampere_value) : volts(volt_value), amps(ampere_value) {}
+     DefaultDataPoint(float volt_value, float ampere_value) : volts(volt_value), amps(ampere_value) {}
 
-    constexpr DefaultDataPoint() : volts(0), amps(0) {}
+     DefaultDataPoint() : volts(0), amps(0) {}
 
 
-    constexpr datum voltage() const { return volts; }
+     datum voltage() const { return volts; }
 
-    constexpr void voltage(datum v) { this->volts = v; }
+     void voltage(datum v) { this->volts = v; }
 
-    constexpr datum ampere() const { return amps; }
+     datum ampere() const { return amps; }
 
-    constexpr void ampere(datum a) { this->amps = a; }
+     void ampere(datum a) { this->amps = a; }
 
     datum volts;
     datum amps;

@@ -41,14 +41,12 @@ target_include_directories(${PROJECT_NAME}
     PUBLIC
     "${dataloader_INCLUDE_DIR}"
     ${Boost_INCLUDE_DIRS}
-    ${SNDFILE_INCLUDE_DIR}
     ${HDF5_INCLUDE_DIR}
     )
 
 
 target_link_libraries(${PROJECT_NAME} -lm -lpthread)
 target_link_libraries(${PROJECT_NAME}
-    ${SNDFILE_LIBRARIES}
     ${Boost_LIBRARIES}
     ${HDF5_LIBRARIES}
     )

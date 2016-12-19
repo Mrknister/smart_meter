@@ -40,9 +40,9 @@ void addMEDALDataPoint(float current0, float current1, float current2, float cur
     data_queue.addDataPoint(dp);
     for(int i = 0; i <= 5; ++i) {
 
-        std::cout << std::setfill(' ') << std::left << std::setw(5)<<dp.currents[i]  << "  ";
+        std::cout << std::setfill(' ') << std::left << std::setw(7)<<dp.currents[i]  << "  ";
     }
-    std::cout << std::setfill(' ') << std::setw(5) <<voltage<< std::endl;
+    std::cout << std::setfill(' ') << std::setw(7) <<voltage<< std::endl;
 
 
 }

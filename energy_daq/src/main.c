@@ -370,26 +370,32 @@ bool check_trigger_id(uint8_t *buffer) {
     state.last_trigger_id = trigger_id;
 
     // because we are lazy we also put the packet into the data_queue here
-    int channels[NUMBER_OF_MEDAL_CHANNELS] = {0}; // medal channels + voltage
+    uint16_t channels[NUMBER_OF_MEDAL_CHANNELS] = {0}; // medal channels + voltage
 
-    int i = 2;
-    for (; i < 14; ++i) {
-        int j = 0;
-        for (; j < NUMBER_OF_MEDAL_CHANNELS; j++) {
+    int j = 0;
+    for (; j < NUMBER_OF_MEDAL_CHANNELS; ++j) {
+        int i_counter = 13;
+
+        for (; i_counter >= 2; --i_counter) {
+
             channels[j] <<= 1;
-            channels[j] |= (buffer[i] & (1 << j + 1)) >= 1;
+
+            int or_value = (buffer[i_counter] & (1 << (j + 1))) >= 1 ;
+            channels[j] |= or_value;
+
 
         }
     }
 
+
     float calibrated_channels[NUMBER_OF_MEDAL_CHANNELS];
-    calibrated_channels[0] = ((float) (channels[0] - 2500)) * 0.015151515f; //  1 / 0.066 V/A * (4.096 / 4096)
-    calibrated_channels[1] = ((float) (channels[1] - 2500)) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[2] = ((float) (channels[2] - 2500)) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[3] = ((float) (channels[3] - 2500)) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[4] = ((float) (channels[4] - 2500)) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[5] = ((float) (channels[5] - 2500)) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
-    calibrated_channels[6] = ((float) (channels[6] - 2380)) *
+    calibrated_channels[0] = (((float) channels[0]) -2500) * 0.015151515f; //  1 / 0.066 V/A * (4.096 / 4096)
+    calibrated_channels[1] = (((float) channels[1]) -2500) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[2] = (((float) channels[2]) -2500) *0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[3] = (((float) channels[3]) -2500) *0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[4] = (((float) channels[4]) -2500) *0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[5] = (((float) channels[5]) -2500) * 0.005405405f; //  1 / 0.185 V/A * (4.096 / 4096)
+    calibrated_channels[6] = (((float) channels[6]) -2380) *
                              0.2853f; // 230V / (6V * 1.478 estimated IdleVolt) * (100000Ohm + 10000Ohm) / 10000Ohm) * (4.096 / 4096)
     addMEDALDataPoint(calibrated_channels[0], calibrated_channels[1], calibrated_channels[2], calibrated_channels[3],
                       calibrated_channels[4], calibrated_channels[5], calibrated_channels[6]);

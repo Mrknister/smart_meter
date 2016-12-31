@@ -142,4 +142,19 @@ bool EventLabelManager<DataPointType>::labelIsForEvent(const LabelTimePair &labe
            !__detail::TimePairComparator::compareLabels(label_time, to_search);
 }
 
+template<typename DataPointType>
+bool EventLabelManager<DataPointType>::addLabel(const LabelTimePair labels) {
+    for(int i = 0; i < unlabeled_events.size(); ++i) {
+        if(labelIsForEvent(labels,unlabeled_events[i])) {
+            if (i !=  unlabeled_events.size() -1) {
+                std::swap(this->unlabeled_events.back(), this->unlabeled_events[i]);
+            }
+            this->addLabeledEvent(this->unlabeled_events.back(), labels.label);
+            this->unlabeled_events.pop_back();
+            return true;
+        }
+    }
+    return false;
+}
+
 #endif //SMART_SCREEN_LABELEDEVENTS_H

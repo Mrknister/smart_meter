@@ -45,6 +45,10 @@ int main(int argc, char **argv) {
 
     detect.join();
     analyzer.stopAnalyzing();
+    const static Eigen::IOFormat CSVFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", "\n");
+    Eigen::MatrixXf final_matrix = analyzer.getNormalizedLabeledMatrix();
+    cout << "done analyzing\n\n\n" <<final_matrix.format(CSVFormat) <<endl;
+
 
 
     return 0;

@@ -934,7 +934,7 @@ int main(int argc, char **argv) {
     if (!init_ftdi()) {
         return EXIT_FAILURE;
     }
-    init_daq_interface();
+    init_daq_interface(config.frequency);
     stop_capture(true);
 
     print_firmware_version();

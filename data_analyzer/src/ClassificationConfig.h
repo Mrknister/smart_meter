@@ -9,9 +9,9 @@ namespace NormalizationMode {
 }
 class ClassificationConfig {
 public:
-    int number_of_rms = 5;
+    int number_of_rms = 20;
     NormalizationMode::NormalizationMode normalization_mode = NormalizationMode::Standardize;
-    long number_of_harmonics = 5;
+    long number_of_harmonics = 20;
     long harmonics_search_radius = 5;
 
 

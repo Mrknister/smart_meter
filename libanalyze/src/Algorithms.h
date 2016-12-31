@@ -32,7 +32,7 @@ namespace Algorithms {
 
 
     template<typename IteratorType,typename IteratorType2, typename DataType = float> DataType
-    euklideanDistance(IteratorType begin, const IteratorType end, IteratorType2 begin2, const IteratorType2 end2) {
+    euclideanDistance(IteratorType begin, const IteratorType end, IteratorType2 begin2, const IteratorType2 end2) {
         DataType result = 0.0;
         DataType n = end-begin;
         while (begin != end && begin2 != end2) {

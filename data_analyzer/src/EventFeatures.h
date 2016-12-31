@@ -10,7 +10,6 @@
 class EventFeatures {
 public:
     typedef float FeatureType;
-    unsigned int event_id;
 
     EventMetaData event_meta_data;
 
@@ -18,7 +17,7 @@ public:
 
     EventFeatures() {}
 
-    EventFeatures(EventMetaData meta_data, std::vector<FeatureType> f_vect) : event_meta_data(meta_data),
+    EventFeatures(EventMetaData meta_data, std::vector<FeatureType> f_vect) :event_meta_data(meta_data),
                                                                               feature_vector(std::move(f_vect)) {}
 
 

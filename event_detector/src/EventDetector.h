@@ -120,7 +120,7 @@ template<typename EventDetectionStrategyType, typename DataPointType> bool
 EventDetector<EventDetectionStrategyType, DataPointType>::detectEvent(DataPointType *tested_period) {
     if (this->event_detection_strategy.detectEvent(tested_period, tested_period + this->buffer_length,
                                                    this->buffer_length)) {
-        std::cout << "time: " << this->dynamic_meta_data->getDataPointTime(this->data_points_read) << std::endl;
+        std::cout << "time: " << this->dynamic_meta_data->getDataPointTime(this->data_points_read) << " data_point_time: " << tested_period->x_value << std::endl;
 
         return true;
     }

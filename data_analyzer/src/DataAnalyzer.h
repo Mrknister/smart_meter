@@ -23,6 +23,8 @@ public:
     void
     startClassification(const std::string &label_location, const ClassificationConfig &config = ClassificationConfig());
 
+    void startClassification(const ClassificationConfig &config = ClassificationConfig());
+
     void stopAnalyzing();
 
     void pushEvent(const Event<DataPointType> &e);
@@ -41,10 +43,17 @@ public:
 
     ~DataAnalyzer() { this->stopAnalyzing(); }
 
+    Eigen::MatrixXf getNormalizedLabeledMatrix();
+
+    EventLabelManager<DataPointType> getEventLabelManager();
+
+
 private:
+    void run();
+
     void processOneEvent(const Event<DataPointType> &features);
 
-    Eigen::VectorXf getFeatureVector(const EventFeatures &features);
+    Eigen::VectorXf convertToEigenVector(const EventFeatures &features);
 
     void regenerateMatrix();
 
@@ -62,7 +71,7 @@ private:
 
     void generateFirstNormalizationVectors(const Eigen::MatrixXf &matrix);
 
-    std::vector<DataFeatureType> eigenToStdVector(const Eigen::VectorXf &vec){
+    std::vector<DataFeatureType> eigenToStdVector(const Eigen::VectorXf &vec) {
         std::vector<DataAnalyzer::DataFeatureType> result;
         result.reserve(vec.size());
         for (int i = 0; i < vec.size(); ++i) {
@@ -71,7 +80,6 @@ private:
         return result;
 
     }
-
 
 
     Eigen::VectorXf generateMaxVector(const Eigen::MatrixXf &matrix);
@@ -114,6 +122,12 @@ template<typename DataPointType> void DataAnalyzer<DataPointType>::processOneEve
     std::cout << "processing event\n";
     EventFeatures features = feature_extractor.extractFeatures(event);
 
+    // temporary hack... yeah like that's gonna be removed any time soon
+    EventStorage<DataPointType> storage;
+    storage.storeFeatureVector(features.feature_vector.begin(), features.feature_vector.end(), features.event_meta_data.event_id);
+    // hack end
+
+
     if (event_label_manager.findLabelAndAddEvent(features)) {
         this->addEventToNormalizedMatrix(features);
     } else {
@@ -139,7 +153,8 @@ template<typename DataPointType> void DataAnalyzer<DataPointType>::classifyOneEv
     // We do not want approximations but we want to sort by the distance,
     indices.resize(k);
     dists2.resize(k);
-    nns->knn(this->getFeatureVector(features), indices, dists2, k);
+    auto vect = this->convertToEigenVector(features);
+    nns->knn(normalizeEvent(vect), indices, dists2, k);
 
     std::cout << "The labels of the closest neighbors are: ";
     for (int i = 0; i < k; ++i) {
@@ -154,26 +169,8 @@ template<typename DataPointType> void
 DataAnalyzer<DataPointType>::startClassification(const std::string &label_location,
                                                  const ClassificationConfig &config) {
     this->join();
-    this->continue_analyzing = true;
     this->event_label_manager.loadLabelsFromFile(label_location);
-    feature_extractor.setConfig(config);
-
-    runner = std::thread([this]() {
-
-        while (true) {
-            // wait until an event is pushed
-            std::unique_lock<std::mutex> events_lock(this->events_mutex);
-            this->events_empty_variable.wait(events_lock, [this]() {
-                return !this->events.empty() || !this->continue_analyzing;
-            });
-            // if we dont want to analyze events anymore, quit
-            if (!this->continue_analyzing) {
-                break;
-            }
-            this->processOneEvent(this->events.back());
-            this->events.pop_back();
-        }
-    });
+    this->startClassification(config);
 }
 
 template<typename DataPointType> void DataAnalyzer<DataPointType>::stopAnalyzing() {
@@ -184,7 +181,7 @@ template<typename DataPointType> void DataAnalyzer<DataPointType>::stopAnalyzing
 }
 
 template<typename DataPointType> Eigen::VectorXf
-DataAnalyzer<DataPointType>::getFeatureVector(const EventFeatures &features) {
+DataAnalyzer<DataPointType>::convertToEigenVector(const EventFeatures &features) {
     Eigen::VectorXf result;
     result.resize(features.feature_vector.size());
     int count = 0;
@@ -192,6 +189,7 @@ DataAnalyzer<DataPointType>::getFeatureVector(const EventFeatures &features) {
         result(count) = f;
         ++count;
     }
+
     return result;
 }
 
@@ -199,7 +197,7 @@ template<typename DataPointType> void
 DataAnalyzer<DataPointType>::addEventToNormalizedMatrix(const EventFeatures &features) {
 
 
-    Eigen::VectorXf feature_vec = getFeatureVector(features);
+    Eigen::VectorXf feature_vec = convertToEigenVector(features);
     std::cout << "feature_vec: " << feature_vec << "\n\n";
     if (needToRegenerateMatrixForVector(feature_vec)) {
         std::cout << "\nRegenerating matrix:\n" << std::endl;
@@ -275,12 +273,10 @@ DataAnalyzer<DataPointType>::generateStandardizeNormalizationVectors(const Eigen
     for (long i = 0; i < matrix.rows(); ++i) {
         auto row_vector = eigenToStdVector(matrix.row(i));
 
-        FeatureExtractor::FeatureType mean = Algorithms::mean(row_vector.begin(),
-                                                              row_vector.end());
+        FeatureExtractor::FeatureType mean = Algorithms::mean(row_vector.begin(), row_vector.end());
 
 
-        FeatureExtractor::FeatureType variance = Algorithms::variance(row_vector.begin(),
-                                                                      row_vector.end());
+        FeatureExtractor::FeatureType variance = Algorithms::variance(row_vector.begin(), row_vector.end());
 
         FeatureExtractor::FeatureType deviation = std::sqrt(variance);
         normalization_mul_vector(i) = 1.f / deviation;
@@ -327,7 +323,7 @@ template<typename DataPointType> void DataAnalyzer<DataPointType>::regenerateMat
 
     this->labeled_matrix.resize(rows, cols);
     for (int i = 0; i < cols; ++i) {
-        Eigen::VectorXf vec = getFeatureVector(this->event_label_manager.labeled_events[i]);
+        Eigen::VectorXf vec = convertToEigenVector(this->event_label_manager.labeled_events[i]);
         this->labeled_matrix.col(i) = vec;
     }
 
@@ -336,12 +332,14 @@ template<typename DataPointType> void DataAnalyzer<DataPointType>::regenerateMat
 }
 
 template<typename DataPointType> void DataAnalyzer<DataPointType>::normalizeMatrix(Eigen::MatrixXf &matrix) {
-    std::cout << "unnormalized matrix:\n" << matrix << "\n\n";
+    const static Eigen::IOFormat CSVFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", "\n");
+
+    std::cout << "unnormalized matrix:\n" << matrix.format(CSVFormat) << "\n\n";
 
     for (long i = 0; i < matrix.cols(); ++i) {
         matrix.col(i) = normalizeEvent(matrix.col(i));
     }
-    std::cout << "normalized matrix:\n" << matrix << "\n\n";
+    std::cout << "normalized matrix:\n" << matrix.format(CSVFormat) << "\n\n";
 
 }
 
@@ -366,19 +364,51 @@ DataAnalyzer<DataPointType>::generateFirstNormalizationVectors(const Eigen::Matr
     normalization_add_vector = -matrix.col(0);
 }
 
-template<typename DataPointType>void DataAnalyzer<DataPointType>::addLabel(const LabelTimePair &label) {
+template<typename DataPointType> void DataAnalyzer<DataPointType>::addLabel(const LabelTimePair &label) {
     std::lock_guard<std::mutex> lock(this->events_mutex);
     this->event_label_manager.addLabel(label);
 
 
-
 }
 
-template<typename DataPointType>void DataAnalyzer<DataPointType>::addLabels(const std::vector<LabelTimePair> &labels) {
+template<typename DataPointType> void DataAnalyzer<DataPointType>::addLabels(const std::vector<LabelTimePair> &labels) {
 
 }
+template<typename DataPointType>
+void DataAnalyzer<DataPointType>::startClassification(const ClassificationConfig &config) {
 
+    this->continue_analyzing = true;
+    feature_extractor.setConfig(config);
+    runner = std::thread(&DataAnalyzer<DataPointType>::run, this);
+}
 
+template<typename DataPointType>
+void DataAnalyzer<DataPointType>::run() {
+
+    while (true) {
+        // wait until an event is pushed
+        std::unique_lock<std::mutex> events_lock(this->events_mutex);
+        this->events_empty_variable.wait(events_lock, [this]() {
+            return !this->events.empty() || !this->continue_analyzing;
+        });
+        // if we dont want to analyze events anymore, quit
+        if (!this->continue_analyzing) {
+            break;
+        }
+        this->processOneEvent(this->events.back());
+        this->events.pop_back();
+    }
+}
+
+template<typename DataPointType>
+Eigen::MatrixXf DataAnalyzer<DataPointType>::getNormalizedLabeledMatrix() {
+    return this->labeled_matrix;
+}
+
+template<typename DataPointType>
+EventLabelManager<DataPointType> DataAnalyzer<DataPointType>::getEventLabelManager() {
+    return this->event_label_manager;
+}
 
 
 #endif //SMART_SCREEN_DATAANALYZER_H

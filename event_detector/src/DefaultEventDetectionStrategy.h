@@ -7,7 +7,7 @@
 
 class DefaultEventDetectionStrategy {
 public:
-    DefaultEventDetectionStrategy(float detection_threshold = 0.7) {
+    DefaultEventDetectionStrategy(float detection_threshold = 0.2) {
         this->threshold = detection_threshold;
     }
 
@@ -21,8 +21,10 @@ public:
 
         if (current_rms - threshold > previous_rms) {
             previous_rms = current_rms;
+            std::cout << "Detected an event" << std::endl;
             return true;
         } else {
+
             previous_rms = previous_weight * previous_rms + current_weight * current_rms;
             return false;
         }
@@ -31,8 +33,8 @@ public:
 private:
     float previous_rms = -100000;
     float threshold;
-    float previous_weight = 0.8;
-    float current_weight = 1.0 - previous_weight;
+    float previous_weight = 0.4;
+    float current_weight = 1.0f - previous_weight;
 
 };
 

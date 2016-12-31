@@ -8,7 +8,7 @@
 
 #endif
 
-DAQ_INTERFACE_EXTERN_C void init_daq_interface();
+DAQ_INTERFACE_EXTERN_C void init_daq_interface(unsigned int sample_rate);
 DAQ_INTERFACE_EXTERN_C void addMEDALDataPoint(float current0,float current1,float current2,float current3,float current4,float current5,float voltage);
 
 

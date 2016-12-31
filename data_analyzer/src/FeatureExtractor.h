@@ -1,7 +1,7 @@
 #ifndef SMART_SCREEN_FEATUREEXTRACTOR_H
 #define SMART_SCREEN_FEATUREEXTRACTOR_H
 
-
+#include <complex>
 #include "EventFeatures.h"
 #include "FastFourierTransformCalculator.h"
 #include "HarmonicsFeature.h"
@@ -18,15 +18,16 @@ private:
     template<typename DataPointType> void
     extractRms(const Event<DataPointType> &event, std::vector<FeatureType> &feature_vec);
 
-    template<typename DataPointType> void
-    extractFFTFeatures(const Event<DataPointType> &event, std::vector<FeatureType> &feature_vec);
 
-    void extractHarmonics(const std::vector<kiss_fft_cpx> &fft_of_current,
-                          std::vector<FeatureExtractor::FeatureType> &feature_vec,
-                          const EventMetaData &event_meta_data);
+    template<typename DataPointType> void
+    extractHarmonics(const Event<DataPointType> &event, std::vector<FeatureExtractor::FeatureType> &feature_vec);
 
     template<typename DataPointType> void
     extractPhaseShift(const Event<DataPointType> &event, std::vector<FeatureExtractor::FeatureType> &feature_vec);
+
+    float calcPhaseShift(const std::vector<kiss_fft_cpx> &amps, const std::vector<kiss_fft_cpx> &volts,
+                         unsigned long frequency);
+
 
 private:
     ClassificationConfig classification_config;
@@ -36,8 +37,10 @@ private:
 
 template<typename DataPointType> EventFeatures FeatureExtractor::extractFeatures(const Event<DataPointType> &event) {
     std::vector<FeatureType> f_vect;
+    extractPhaseShift<DataPointType>(event, f_vect);
+
     extractRms<DataPointType>(event, f_vect);
-    extractFFTFeatures<DataPointType>(event, f_vect);
+    extractHarmonics<DataPointType>(event, f_vect);
     return EventFeatures(event.event_meta_data, f_vect);
 }
 
@@ -68,21 +71,12 @@ void FeatureExtractor::setConfig(ClassificationConfig config) {
 
 }
 
-template<typename DataPointType> void FeatureExtractor::extractFFTFeatures(const Event<DataPointType> &event,
-                                                                           std::vector<FeatureExtractor::FeatureType> &feature_vec) {
+
+template<typename DataPointType> void FeatureExtractor::extractHarmonics(const Event<DataPointType> &event,
+                                                                         std::vector<FeatureExtractor::FeatureType> &feature_vec) {
     std::vector<kiss_fft_cpx> fft_ampere = fft_calculator.calculateAmpereFFT(event.event_begin(), event.event_end());
-    std::vector<kiss_fft_cpx> fft_voltage = fft_calculator.calculateVoltageFFT(event.event_begin(), event.event_end());
-
-    extractHarmonics(fft_ampere, feature_vec, event.event_meta_data);
-    extractPhaseShift<DataPointType>(event,feature_vec);
-
-}
-
-void FeatureExtractor::extractHarmonics(const std::vector<kiss_fft_cpx> &fft_of_current,
-                                        std::vector<FeatureExtractor::FeatureType> &feature_vec,
-                                        const EventMetaData &event_meta_data) {
-    std::vector<FeatureExtractor::FeatureType> harm = Algorithms::getHarmonics(fft_of_current,
-                                                                               event_meta_data.power_meta_data.frequency,
+    std::vector<FeatureExtractor::FeatureType> harm = Algorithms::getHarmonics(fft_ampere,
+                                                                               event.event_meta_data.power_meta_data.frequency,
                                                                                classification_config.number_of_harmonics,
                                                                                classification_config.harmonics_search_radius);
     std::transform(harm.begin(), harm.end(), harm.begin(), [](float f) { return std::abs(f); });
@@ -91,8 +85,40 @@ void FeatureExtractor::extractHarmonics(const std::vector<kiss_fft_cpx> &fft_of_
 
 template<typename DataPointType> void FeatureExtractor::extractPhaseShift(const Event<DataPointType> &event,
                                                                           std::vector<FeatureExtractor::FeatureType> &feature_vec) {
+    long num_data_points = event.before_event_end() - event.before_event_begin();
+    num_data_points = std::min(num_data_points, static_cast<long>(event.event_end() - event.event_begin()));
+
+    std::vector<kiss_fft_cpx> fft_ampere_before = fft_calculator.calculateAmpereFFT(event.before_event_begin(),
+                                                                                    event.before_event_begin() +
+                                                                                    num_data_points);
+    std::vector<kiss_fft_cpx> fft_voltage_before = fft_calculator.calculateVoltageFFT(event.before_event_begin(),
+                                                                                      event.before_event_begin() +
+                                                                                      num_data_points);
+    float phase_shift_before = calcPhaseShift(fft_ampere_before, fft_voltage_before,
+                                              event.event_meta_data.power_meta_data.frequency);
+
+    std::vector<kiss_fft_cpx> fft_ampere = fft_calculator.calculateAmpereFFT(event.event_begin(),
+                                                                             event.event_begin() + num_data_points);
+    std::vector<kiss_fft_cpx> fft_voltage = fft_calculator.calculateVoltageFFT(event.event_begin(),
+                                                                               event.event_begin() + num_data_points);
+    float phase_shift = calcPhaseShift(fft_ampere, fft_voltage, event.event_meta_data.power_meta_data.frequency);
+
+    float phase_shift_difference = phase_shift - phase_shift_before;
+    feature_vec.push_back(phase_shift_difference);
 
 
+}
+
+
+float FeatureExtractor::calcPhaseShift(const std::vector<kiss_fft_cpx> &amps, const std::vector<kiss_fft_cpx> &volts,
+                                       unsigned long frequency) {
+
+    std::complex<float> amps_cpx(amps[frequency].r, amps[frequency].i);
+    std::complex<float> volts_cpx(volts[frequency].r, volts[frequency].i);
+
+    float angle_amps = std::arg(amps_cpx);
+    float angle_volts = std::arg(volts_cpx);
+    return  angle_amps - angle_volts;
 }
 
 

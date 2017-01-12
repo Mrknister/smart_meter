@@ -1,7 +1,7 @@
 #ifndef EVENTDETECTOR_H
 #define EVENTDETECTOR_H
 
-#include "DataManager.h"
+#include "AsyncDataQueue.h"
 #include <string>
 #include <memory>
 #include <thread>
@@ -20,7 +20,7 @@ public:
      * @param meta_data
      * @param time
      */
-    void startAnalyzing(DataManager<DataPointType> *input_data_manager, DynamicStreamMetaData *meta_data,
+    void startAnalyzing(AsyncDataQueue<DataPointType> *input_data_manager, DynamicStreamMetaData *meta_data,
                         EventDetectionStrategyType strategy = EventDetectionStrategyType());
 
     /**
@@ -60,7 +60,7 @@ private:
     DynamicStreamMetaData *dynamic_meta_data;
 
     PowerMetaData power_meta_data;
-    DataManager<DataPointType> *data_manager;
+    AsyncDataQueue<DataPointType> *data_manager;
     DynamicStreamMetaData::DataPointIdType data_points_read = -1;
     unsigned long buffer_length;
     std::unique_ptr<DataPointType[]> electrical_period_buffer;
@@ -70,7 +70,7 @@ private:
 };
 
 template<typename EventDetectionStrategyType, typename DataPointType> void
-EventDetector<EventDetectionStrategyType, DataPointType>::startAnalyzing(DataManager<DataPointType> *input_data_manager,
+EventDetector<EventDetectionStrategyType, DataPointType>::startAnalyzing(AsyncDataQueue<DataPointType> *input_data_manager,
                                                                          DynamicStreamMetaData *meta_data,
                                                                          EventDetectionStrategyType strategy) {
     assert(input_data_manager != nullptr);
@@ -120,8 +120,9 @@ template<typename EventDetectionStrategyType, typename DataPointType> bool
 EventDetector<EventDetectionStrategyType, DataPointType>::detectEvent(DataPointType *tested_period) {
     if (this->event_detection_strategy.detectEvent(tested_period, tested_period + this->buffer_length,
                                                    this->buffer_length)) {
-        std::cout << "time: " << this->dynamic_meta_data->getDataPointTime(this->data_points_read) << " data_point_time: " << tested_period->x_value << std::endl;
-
+#ifdef DEBUG_OUTPUT
+        std::cout << "time: " << this->dynamic_meta_data->getDataPointTime(this->data_points_read) << std::endl;
+#endif
         return true;
     }
     return false;

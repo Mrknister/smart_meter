@@ -19,7 +19,9 @@ struct EventMetaData {
     PowerMetaData power_meta_data;
     EventMetaData() {}
 
+
     EventMetaData(TimeType time,PowerMetaData meta_data) : event_time(time), power_meta_data(meta_data){}
+
 };
 
 #endif // EVENTMETADATA_H

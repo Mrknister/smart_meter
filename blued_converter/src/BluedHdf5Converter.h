@@ -3,7 +3,7 @@
 
 #include <string>
 #include "H5Cpp.h"
-#include "DataManager.h"
+#include "AsyncDataQueue.h"
 #include "BluedInputSource.h"
 
 class BluedHdf5Converter

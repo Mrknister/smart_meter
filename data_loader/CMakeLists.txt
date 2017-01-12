@@ -24,7 +24,7 @@ set(DATALOADER_SRCS
     src/BluedHdf5InputSource.h
     src/BluedInputSource.cpp
     src/BluedInputSource.h
-    src/DataManager.h
+    src/AsyncDataQueue.h
     src/DefaultDataPoint.h
     src/PowerMetaData.cpp
     src/PowerMetaData.h

@@ -39,7 +39,7 @@ private:
 
     void runLocations(std::vector<std::string> locations, std::function<void()> callback);
 
-    static BluedDataPoint matchLine(std::ifstream &input_stream);
+    BluedDataPoint matchLine(std::ifstream &input_stream);
 
     bool readOnce(std::ifstream &input_stream);
 
@@ -48,6 +48,7 @@ private:
 private:
     bool continue_reading = true;
     std::thread runner;
+    double previous_x_value = -1000;
 };
 
 #endif // _BLUED_INPUT_SOURCE_

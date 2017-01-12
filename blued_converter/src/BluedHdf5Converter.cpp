@@ -1,5 +1,5 @@
 #include "BluedHdf5Converter.h"
-#include "DataManager.h"
+#include "AsyncDataQueue.h"
 #include "BluedInputSource.h"
 #include "H5Cpp.h"
 

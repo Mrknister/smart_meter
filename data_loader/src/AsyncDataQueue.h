@@ -16,13 +16,13 @@
  * @brief The DataManager is a synchronized point for asynchronous reading and writing operations.
  *
  */
-template<typename DataPointType> class DataManager;
+template<typename DataPointType> class AsyncDataQueue;
 
-typedef DataManager<DefaultDataPoint> DefaultDataManager;
+typedef AsyncDataQueue<DefaultDataPoint> DefaultDataManager;
 
-template<typename DataPointType> class DataManager {
+template<typename DataPointType> class AsyncDataQueue {
 public:
-    ~DataManager();
+    ~AsyncDataQueue();
 
     void setQueueMaxSize(unsigned long max_size);
 
@@ -123,7 +123,7 @@ private:
 };
 
 
-template<typename DataPointType> DataManager<DataPointType>::~DataManager() {
+template<typename DataPointType> AsyncDataQueue<DataPointType>::~AsyncDataQueue() {
     {
         std::lock_guard<std::mutex> clear_queue(data_queue_mutex);
         data_queue.clear();
@@ -131,17 +131,17 @@ template<typename DataPointType> DataManager<DataPointType>::~DataManager() {
     deque_overflow.notify_all();
 }
 
-template<typename DataPointType> unsigned long DataManager<DataPointType>::getQueueMaxSize() {
+template<typename DataPointType> unsigned long AsyncDataQueue<DataPointType>::getQueueMaxSize() {
     return this->queue_max_size;
 }
 
-template<typename DataPointType> unsigned long DataManager<DataPointType>::getQueueSize() {
+template<typename DataPointType> unsigned long AsyncDataQueue<DataPointType>::getQueueSize() {
     std::unique_lock<std::mutex> queue_lock(this->data_queue_mutex);
 
     return this->data_queue.size();
 }
 
-template<typename DataPointType> void DataManager<DataPointType>::setQueueMaxSize(unsigned long max_size) {
+template<typename DataPointType> void AsyncDataQueue<DataPointType>::setQueueMaxSize(unsigned long max_size) {
     std::unique_lock<std::mutex> queue_lock(this->data_queue_mutex);
     this->queue_max_size = max_size;
     this->deque_overflow.notify_one();
@@ -149,7 +149,7 @@ template<typename DataPointType> void DataManager<DataPointType>::setQueueMaxSiz
 
 
 template<typename DataPointType> template<typename IteratorType> void
-DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end) {
+AsyncDataQueue<DataPointType>::addDataPoints(IteratorType begin, IteratorType end) {
     auto waiting_function = this->getQueueNotFullWaiter();
 
     while (begin != end && !this->stream_ended) {
@@ -165,7 +165,7 @@ DataManager<DataPointType>::addDataPoints(IteratorType begin, IteratorType end) 
 
 
 template<typename DataPointType> template<typename IteratorType> IteratorType
-DataManager<DataPointType>::getDataPoints(IteratorType begin, IteratorType end, unsigned long offset) {
+AsyncDataQueue<DataPointType>::getDataPoints(IteratorType begin, IteratorType end, unsigned long offset) {
     auto waiting_function = this->getQueueHasEnoughElementsWaiter(static_cast<long>(end - begin) + offset);
     std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
     this->deque_underflow.wait(deque_overflow_wait_lock, waiting_function);
@@ -175,7 +175,7 @@ DataManager<DataPointType>::getDataPoints(IteratorType begin, IteratorType end, 
     return begin;
 }
 
-template<typename DataPointType> void DataManager<DataPointType>::nextDataPoints(unsigned long num_data_points) {
+template<typename DataPointType> void AsyncDataQueue<DataPointType>::nextDataPoints(unsigned long num_data_points) {
     std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
 
     auto queue_has_enough_elements = this->getQueueHasEnoughElementsWaiter(num_data_points);
@@ -185,7 +185,7 @@ template<typename DataPointType> void DataManager<DataPointType>::nextDataPoints
 }
 
 
-template<typename DataPointType> void DataManager<DataPointType>::addDataPoint(DataPointType data_point) {
+template<typename DataPointType> void AsyncDataQueue<DataPointType>::addDataPoint(DataPointType data_point) {
     std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
 
     auto queue_not_full = this->getQueueNotFullWaiter();
@@ -197,31 +197,31 @@ template<typename DataPointType> void DataManager<DataPointType>::addDataPoint(D
 }
 
 template<typename DataPointType> std::function<bool()>
-DataManager<DataPointType>::getQueueHasEnoughElementsWaiter(unsigned long num_elements) {
+AsyncDataQueue<DataPointType>::getQueueHasEnoughElementsWaiter(unsigned long num_elements) {
     return [this, num_elements]() -> bool {
         return this->data_queue.size() >= num_elements || this->stream_ended;
     };
 }
 
-template<typename DataPointType> std::function<bool()> DataManager<DataPointType>::getQueueNotEmptyWaiter() {
+template<typename DataPointType> std::function<bool()> AsyncDataQueue<DataPointType>::getQueueNotEmptyWaiter() {
     return [this]() -> bool {
         return this->data_queue.size() > 0 || this->stream_ended;
     };
 }
 
-template<typename DataPointType> std::function<bool()> DataManager<DataPointType>::getQueueNotFullWaiter() {
+template<typename DataPointType> std::function<bool()> AsyncDataQueue<DataPointType>::getQueueNotFullWaiter() {
     return [this]() -> bool {
         return this->data_queue.size() < this->queue_max_size || this->stream_ended;
     };
 }
 
-template<typename DataPointType> void DataManager<DataPointType>::notifyStreamEnd() {
+template<typename DataPointType> void AsyncDataQueue<DataPointType>::notifyStreamEnd() {
     this->stream_ended = true;
     this->deque_underflow.notify_one();
 }
 
 template<typename DataPointType> template<class IteratorType> IteratorType
-DataManager<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) {
+AsyncDataQueue<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) {
     auto waiting_function = this->getQueueNotEmptyWaiter();
     do {
         std::unique_lock<std::mutex> deque_overflow_wait_lock(this->data_queue_mutex);
@@ -238,7 +238,7 @@ DataManager<DataPointType>::popDataPoints(IteratorType begin, IteratorType end) 
     return begin;
 }
 
-template<typename DataPointType> void DataManager<DataPointType>::removePointsFromQueue(unsigned long num_data_points) {
+template<typename DataPointType> void AsyncDataQueue<DataPointType>::removePointsFromQueue(unsigned long num_data_points) {
     if (num_data_points >= this->data_queue.size()) {
         data_queue.clear();
         return;

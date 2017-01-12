@@ -15,7 +15,7 @@
 
 #define private public
 
-#include "DataManager.h"
+#include "AsyncDataQueue.h"
 #include "PowerMetaData.h"
 #include "BluedInputSource.h"
 #include "../../blued_converter/src/BluedHdf5Converter.h"
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_SUITE(data_loader_suite)
     BOOST_AUTO_TEST_CASE(test_read_write_sorted) {
         using namespace std;
         using namespace boost::range;
-        DataManager<int> data_mgr;
+        AsyncDataQueue<int> data_mgr;
         const int range_size = 12049;
         const int cycles = 60;
 

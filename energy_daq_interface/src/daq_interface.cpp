@@ -1,15 +1,15 @@
-#include <DataManager.h>
-#include <DataAnalyzer.h>
+#include <AsyncDataQueue.h>
+#include <DataClassifier.h>
 #include <EventDetector.h>
 #include "MEDALDataPoint.h"
 #include "daq_interface.h"
 #include <iostream>
 #include <iomanip>
 
-DataManager<MEDALDataPoint> data_queue;
+AsyncDataQueue<MEDALDataPoint> data_queue;
 DynamicStreamMetaData stream_meta_data;
 EventDetector<DefaultEventDetectionStrategy,MEDALDataPoint> event_detector;
-DataAnalyzer<MEDALDataPoint> event_analyzer;
+DataClassifier<MEDALDataPoint> event_analyzer;
 #define MEDAL_BUFFER_SIZE 5000
 int buffer_pos = 0;
 MEDALDataPoint buffer[MEDAL_BUFFER_SIZE];

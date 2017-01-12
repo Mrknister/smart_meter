@@ -20,24 +20,61 @@ struct LabelTimePair {
 namespace __detail {
     struct TimePairComparator {
         static bool compareLabels(const LabelTimePair &l1, const LabelTimePair &l2) {
-            const EventMetaData::MSDurationType accepted_time_difference(5000);
+            const EventMetaData::MSDurationType accepted_time_difference(2500);
             return l1.time + accepted_time_difference < l2.time;
         }
 
         bool operator()(const LabelTimePair &l1, const LabelTimePair &l2) const {
             return compareLabels(l1, l2);
         };
+        int cx;
     };
 }
-template<typename DataPointType = DefaultDataPoint>
-class EventLabelManager {
+template<typename DataPointType = DefaultDataPoint> class EventLabelManager {
 
 public:
+
+    EventLabelManager() {}
+
+    ~EventLabelManager() {}
+
+    // Copy constructor needs more work
+    EventLabelManager(EventLabelManager const &copy) {
+        this->labeled_events = copy.labeled_events;
+        this->unlabeled_events = copy.unlabeled_events;
+        this->labels = copy.labels;
+    }
+
+    EventLabelManager &operator=(EventLabelManager rhs) {
+        rhs.swap(*this);
+        return *this;
+    }
+
+    void swap(EventLabelManager &s) noexcept {
+        std::swap(s.labeled_events, this->labeled_events);
+        std::swap(s.unlabeled_events, this->unlabeled_events);
+        std::swap(s.labels, this->labels);
+    }
+
+    // C++11
+    EventLabelManager(EventLabelManager &&src) noexcept {
+        this->swap(src);
+    }
+
+    EventLabelManager &operator=(EventLabelManager &&src) noexcept {
+        src.swap(*this);
+        return *this;
+    }
+
+
     bool findLabelAndAddEvent(const EventFeatures &event);
 
     void addLabeledEvent(const EventFeatures &event, EventMetaData::LabelType label);
 
     void addClassifiedEvent(const EventFeatures &event);
+
+    void addClassifiedEvent(const EventFeatures &event, EventMetaData::LabelType label);
+
 
     bool addLabel(const LabelTimePair labels);
 
@@ -57,8 +94,7 @@ private:
 
 };
 
-template<typename DataPointType>
-bool
+template<typename DataPointType> bool
 EventLabelManager<DataPointType>::findLabelAndAddEvent(const EventFeatures &event) {
     boost::optional<EventMetaData::LabelType> opt_label = boost::none;
     if (event.event_meta_data.label == boost::none) {
@@ -72,23 +108,22 @@ EventLabelManager<DataPointType>::findLabelAndAddEvent(const EventFeatures &even
     return false;
 }
 
-template<typename DataPointType>
-void
+template<typename DataPointType> void
 EventLabelManager<DataPointType>::addLabeledEvent(const EventFeatures &event, EventMetaData::LabelType label) {
     this->labeled_events.push_back(event);
     this->labeled_events.back().event_meta_data.label = label;
 }
 
-template<typename DataPointType>
-void EventLabelManager<DataPointType>::addClassifiedEvent(const EventFeatures &event) {
-    this->labeled_events.push_back(event);
+template<typename DataPointType> void EventLabelManager<DataPointType>::addClassifiedEvent(const EventFeatures &event) {
+    this->unlabeled_events.push_back(event);
 }
 
-template<typename DataPointType>
-boost::optional<EventMetaData::LabelType>
+template<typename DataPointType> boost::optional<EventMetaData::LabelType>
 EventLabelManager<DataPointType>::getEventLabel(const EventFeatures &event) const {
     if (labels.empty()) {
+#ifdef DEBUG_OUTPUT
         std::cout << "No labels loaded!\n";
+#endif
         return boost::none;
     }
     LabelTimePair to_search;
@@ -97,22 +132,25 @@ EventLabelManager<DataPointType>::getEventLabel(const EventFeatures &event) cons
     if (iter != this->labels.end()) {
         return iter->label;
     }
-
+#ifdef DEBUG_OUTPUT
     std::cout << "found no label\n";
     iter = labels.lower_bound(to_search);
     if (iter != labels.end()) {
+
         std::cout << "closest match after event occurrence is: " << iter->time << "\n";
     }
     if (iter != labels.begin()) {
         --iter;
+
         std::cout << "closest match before event occurrence is: " << iter->time << "\n";
     }
+#endif
+
 
     return boost::none;
 }
 
-template<typename DataPointType>
-void EventLabelManager<DataPointType>::loadLabelsFromFile(std::string file_name) {
+template<typename DataPointType> void EventLabelManager<DataPointType>::loadLabelsFromFile(std::string file_name) {
     std::ifstream file(file_name);
     if (!file.good()) {
         std::cerr << "Failed to open file: " + file_name + "\n";
@@ -134,19 +172,18 @@ void EventLabelManager<DataPointType>::loadLabelsFromFile(std::string file_name)
     }
 }
 
-template<typename DataPointType>
-bool EventLabelManager<DataPointType>::labelIsForEvent(const LabelTimePair &label_time, const EventFeatures &event) {
+template<typename DataPointType> bool
+EventLabelManager<DataPointType>::labelIsForEvent(const LabelTimePair &label_time, const EventFeatures &event) {
     LabelTimePair to_search;
     to_search.time = event.event_meta_data.event_time;
     return !__detail::TimePairComparator::compareLabels(to_search, label_time) &&
            !__detail::TimePairComparator::compareLabels(label_time, to_search);
 }
 
-template<typename DataPointType>
-bool EventLabelManager<DataPointType>::addLabel(const LabelTimePair labels) {
-    for(int i = 0; i < unlabeled_events.size(); ++i) {
-        if(labelIsForEvent(labels,unlabeled_events[i])) {
-            if (i !=  unlabeled_events.size() -1) {
+template<typename DataPointType> bool EventLabelManager<DataPointType>::addLabel(const LabelTimePair labels) {
+    for (int i = 0; i < unlabeled_events.size(); ++i) {
+        if (labelIsForEvent(labels, unlabeled_events[i])) {
+            if (i != unlabeled_events.size() - 1) {
                 std::swap(this->unlabeled_events.back(), this->unlabeled_events[i]);
             }
             this->addLabeledEvent(this->unlabeled_events.back(), labels.label);
@@ -155,6 +192,14 @@ bool EventLabelManager<DataPointType>::addLabel(const LabelTimePair labels) {
         }
     }
     return false;
+}
+
+template<typename DataPointType> void
+EventLabelManager<DataPointType>::addClassifiedEvent(const EventFeatures &event, EventMetaData::LabelType label) {
+    this->unlabeled_events.push_back(event);
+    this->unlabeled_events.back().event_meta_data.label = label;
+
+
 }
 
 #endif //SMART_SCREEN_LABELEDEVENTS_H

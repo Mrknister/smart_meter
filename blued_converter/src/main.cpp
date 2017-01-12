@@ -3,11 +3,11 @@
 #include "BluedHdf5Converter.h"
 
 #include "PowerMetaData.h"
-#include "DataManager.h"
+#include "AsyncDataQueue.h"
 #include "BluedHdf5InputSource.h"
 
 #include "EventDetector.h"
-#include "DataAnalyzer.h"
+#include "DataClassifier.h"
 
 int main(int argc, char **argv) {
     if(argc < 3) {

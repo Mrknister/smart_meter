@@ -45,6 +45,8 @@ private:
 
     std::string createFilePath(unsigned long uuid);
 
+    std::string uuidToString(unsigned long uuid);
+
 public:
     std::string event_directory = "events/";
 private:
@@ -63,21 +65,26 @@ EventStorage<DataPointType>::storeEvent(IteratorType begin, const IteratorType e
 template<typename DataPointType> template<typename IteratorType> void
 EventStorage<DataPointType>::writeToFile(IteratorType begin, const IteratorType end, const std::string &file_name,
                                          const EventMetaData &meta_data, const unsigned long id) {
-    std::ofstream out_stream(file_name);
-    boost::archive::text_oarchive oa(out_stream);
-    // write class instance to archive
+
     Event<DataPointType> event;
 
     event.event_data = eventDataToVector<IteratorType>(begin, end);
     event.event_meta_data = meta_data;
     event.event_meta_data.event_id = id;
 
-    this->storeEventDataToCSV(event);
 
     this->callback(event);
 
+#ifndef DONT_STORE_ANYTHING
+    this->storeEventDataToCSV(event);
+
+    std::ofstream out_stream(file_name);
+    boost::archive::text_oarchive oa(out_stream);
+    // write class instance to archive
     oa << event;
     out_stream.close();
+#endif
+
 }
 
 template<typename DataPointType> Event<DataPointType> EventStorage<DataPointType>::loadEvent(unsigned long event_uuid) {
@@ -100,7 +107,7 @@ EventStorage<DataPointType>::eventDataToVector(IteratorType begin, const Iterato
 }
 
 template<typename DataPointType> std::string EventStorage<DataPointType>::createFilePath(unsigned long uuid) {
-    return event_directory + "/event_" + std::to_string(uuid) + ".archive";
+    return event_directory + "/event_"  + uuidToString(uuid) + ".archive";
 }
 
 template<typename DataPointType> void
@@ -110,7 +117,7 @@ EventStorage<DataPointType>::setEventStorageCallback(std::function<void(Event<Da
 
 template<typename DataPointType> void
 EventStorage<DataPointType>::storeEventDataToCSV(const Event<DataPointType> &to_store) {
-    std::string file_path(event_directory + "/event_" + std::to_string(to_store.event_meta_data.event_id) + ".csv");
+    std::string file_path(event_directory + "/event_" + uuidToString(to_store.event_meta_data.event_id) + ".csv");
     std::ofstream file_stream(file_path);
     if (!file_stream.good()) {
         std::cerr << "Could not open path: " << file_path << std::endl;
@@ -124,8 +131,10 @@ EventStorage<DataPointType>::storeEventDataToCSV(const Event<DataPointType> &to_
 
 template<typename DataPointType> template<typename IteratorType> void
 EventStorage<DataPointType>::storeFeatureVector(IteratorType begin, const IteratorType end, unsigned long event_uuid) {
-    std::string file_name = event_directory + "/event_" + std::to_string(event_uuid) + "_feature_vec.csv";
+#ifndef DONT_STORE_ANYTHING
+    std::string file_name = event_directory + "/event_" + uuidToString(event_uuid) + "_feature_vec.csv";
     writeToCSV(begin,end, file_name);
+#endif
 }
 
 template<typename DataPointType> template<typename IteratorType> void
@@ -139,6 +148,14 @@ EventStorage<DataPointType>::writeToCSV(IteratorType begin, const IteratorType e
         file_stream << *begin << "\n";
         ++begin;
     }
+}
+
+template<typename DataPointType>
+std::string EventStorage<DataPointType>::uuidToString(unsigned long uuid) {
+    const size_t pad_width = 7;
+    auto result = std::to_string(uuid);
+    return  pad_width < result.size() ? result:
+            std::string( pad_width - result.size() , '0') + result;
 }
 
 #endif // EVENTSTORAGE_H

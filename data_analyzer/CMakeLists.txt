@@ -9,7 +9,7 @@ include(${CMAKE_SOURCE_DIR}/cmake/Scripts/AddDoxygenTarget.cmake)
 include(${EXTERNAL_DEPENDENCIES_DIR}/libnabo/build/libnaboConfig.cmake)
 
 add_library(${PROJECT_NAME}
-    src/DataAnalyzer.h
+    src/DataClassifier.h
     src/EventLabelManager.h src/ClassificationConfig.cpp src/ClassificationConfig.h src/FeatureExtractor.h)
 
 target_link_libraries(${PROJECT_NAME}

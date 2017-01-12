@@ -1,12 +1,12 @@
 #include <iostream>
 #include <thread>
-
+#define DEBUG_OUTPU
 #include "PowerMetaData.h"
-#include "DataManager.h"
+#include "AsyncDataQueue.h"
 #include "BluedHdf5InputSource.h"
 
 #include "EventDetector.h"
-#include "DataAnalyzer.h"
+#include "DataClassifier.h"
 
 int main(int argc, char **argv) {
 
@@ -30,14 +30,14 @@ int main(int argc, char **argv) {
     data_source.data_manager.setQueueMaxSize(conf.max_data_points_in_queue);
     data_source.meta_data.setFixedPowerMetaData(conf);
 
-    data_source.startReading("all_001.hdf5");
+    data_source.startReading(argv[2]);
 
     EventDetector<DefaultEventDetectionStrategy, BluedDataPoint> detect;
-    detect.startAnalyzing(&data_source.data_manager, &data_source.meta_data, DefaultEventDetectionStrategy(0.1));
+    detect.startAnalyzing(&data_source.data_manager, &data_source.meta_data, DefaultEventDetectionStrategy(1.0));
 
-    DataAnalyzer<BluedDataPoint> analyzer;
-    analyzer.startClassification("event_list.txt");
-    DataAnalyzer<BluedDataPoint>* analyzer_ptr = &analyzer;
+    DataClassifier<BluedDataPoint> analyzer;
+    analyzer.startClassification(argv[3]);
+    DataClassifier<BluedDataPoint>* analyzer_ptr = &analyzer;
 
     detect.storage.setEventStorageCallback([analyzer_ptr](Event<BluedDataPoint>& e) {
         analyzer_ptr->pushEvent(e);
@@ -47,7 +47,11 @@ int main(int argc, char **argv) {
     analyzer.stopAnalyzing();
     const static Eigen::IOFormat CSVFormat(Eigen::StreamPrecision, Eigen::DontAlignCols, ", ", "\n");
     Eigen::MatrixXf final_matrix = analyzer.getNormalizedLabeledMatrix();
-    cout << "done analyzing\n\n\n" <<final_matrix.format(CSVFormat) <<endl;
+    cout << "done analyzing\n\n\n" <<final_matrix.format(CSVFormat) <<"\n\n\n";
+
+    for(auto& x: analyzer.getEventLabelManager().labeled_events) {
+        std::cout << *x.event_meta_data.label<<std::endl;
+    }
 
 
 

@@ -4,7 +4,7 @@
 #include <algorithm>
 
 
-#include "DataManager.h"
+#include "AsyncDataQueue.h"
 #include "BluedDefinitions.h"
 #include "DefaultDataPoint.h"
 

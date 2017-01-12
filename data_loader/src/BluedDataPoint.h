@@ -20,15 +20,16 @@ struct BluedDataPoint {
                                                   current_b(other.current_b), voltage_a(other.voltage_a) {}
 
 
-    datum voltage() const { return voltage_a; }
+    datum voltage() const { return -voltage_a; }
 
     void voltage(datum v) { this->voltage_a = v; }
 
-    datum ampere() const { return current_a; }
+    datum ampere() const { return current_b; }
 
-    void ampere(datum v) { this->current_a = v; }
+    void ampere(datum a) { this->current_b = a; }
 
     float x_value;
+
     float current_a;
     float current_b;
     float voltage_a;

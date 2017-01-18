@@ -55,6 +55,3 @@ add_subdirectory("${CMAKE_SOURCE_DIR}/blued_converter/")
 add_subdirectory("${CMAKE_SOURCE_DIR}/energy_daq_interface/")
 add_subdirectory("${CMAKE_SOURCE_DIR}/energy_daq/")
 
-add_subdirectory(test)
-enable_testing()
-add_test(NAME ENERGY_TESTS COMMAND Test)

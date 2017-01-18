@@ -12,7 +12,6 @@
 #include "FeatureExtractor.h"
 #include <nabo/nabo.h>
 #include <boost/optional/optional_io.hpp>
-#include "EventStorage.h"
 
 
 struct DefaultDataPoint;
@@ -47,11 +46,14 @@ public:
 
     ~DataClassifier() { this->stopAnalyzing(); }
 
+    Eigen::MatrixXf getUnnormalizedLabeledMatrix();
+
     Eigen::MatrixXf getNormalizedLabeledMatrix();
 
     EventLabelManager<DataPointType> getEventLabelManager();
 
     void setEventLabelManager(EventLabelManager<DataPointType> label_manager);
+
     std::size_t getNumberOfElementsOnStack();
 
 
@@ -78,6 +80,8 @@ private:
 
     void generateFirstNormalizationVectors(const Eigen::MatrixXf &matrix);
 
+    Eigen::MatrixXf generateMatrixFromLabeledEvents();
+
     std::vector<DataFeatureType> eigenToStdVector(const Eigen::VectorXf &vec) {
         std::vector<DataClassifier::DataFeatureType> result;
         result.reserve(vec.size());
@@ -98,7 +102,6 @@ private:
     Eigen::VectorXf normalizeEvent(Eigen::VectorXf vec);
 
     void normalizeMatrix(Eigen::MatrixXf &matrix);
-
 
 
 private:
@@ -131,11 +134,6 @@ template<typename DataPointType> void
 DataClassifier<DataPointType>::processOneEvent(const Event<DataPointType> &event) {
     EventFeatures features = feature_extractor.extractFeatures(event);
 
-    // temporary hack... yeah like that's gonna be removed any time soon
-    EventStorage<DataPointType> storage;
-    storage.storeFeatureVector(features.feature_vector.begin(), features.feature_vector.end(),
-                               features.event_meta_data.event_id);
-    // hack end
 
 
     if (event_label_manager.findLabelAndAddEvent(features)) {
@@ -173,7 +171,7 @@ template<typename DataPointType> void DataClassifier<DataPointType>::classifyOne
 
     std::map<EventMetaData::LabelType, int> labels;
     for (int i = 0; i < k; ++i) {
-        labels[event_label_manager.labeled_events[indices(i)].event_meta_data.label.value()]++;
+        labels[*event_label_manager.labeled_events[indices(i)].event_meta_data.label]++;
 #ifdef DEBUG_OUTPUT
         std::cout << event_label_manager.labeled_events[indices(i)].event_meta_data.label;
 #endif
@@ -305,6 +303,7 @@ DataClassifier<DataPointType>::generateStandardizeNormalizationVectors(const Eig
     normalization_mul_vector.resize(matrix.rows());
     normalization_add_vector.resize(matrix.rows());
     const float *data = matrix.row(0).data();
+    const float min_deviation = 0.001;
 
 
     for (long i = 0; i < matrix.rows(); ++i) {
@@ -315,7 +314,8 @@ DataClassifier<DataPointType>::generateStandardizeNormalizationVectors(const Eig
 
         FeatureExtractor::FeatureType variance = Algorithms::variance(row_vector.begin(), row_vector.end());
 
-        FeatureExtractor::FeatureType deviation = std::sqrt(variance);
+        FeatureExtractor::FeatureType deviation = std::max(min_deviation, std::sqrt(variance));
+
         normalization_mul_vector(i) = 1.f / deviation;
         normalization_add_vector(i) = -mean / deviation;
     }
@@ -358,14 +358,7 @@ template<typename DataPointType> void DataClassifier<DataPointType>::regenerateM
     if (event_label_manager.labeled_events.empty()) {
         return;
     }
-    long rows = event_label_manager.labeled_events.back().feature_vector.size();
-    long cols = event_label_manager.labeled_events.size();
-
-    this->labeled_matrix.resize(rows, cols);
-    for (int i = 0; i < cols; ++i) {
-        Eigen::VectorXf vec = convertToEigenVector(this->event_label_manager.labeled_events[i]);
-        this->labeled_matrix.col(i) = vec;
-    }
+    this->labeled_matrix = generateMatrixFromLabeledEvents();
 
     this->generateNormalizationVectors(this->labeled_matrix);
     this->normalizeMatrix(this->labeled_matrix);
@@ -462,6 +455,26 @@ template<typename DataPointType> std::size_t DataClassifier<DataPointType>::getN
     std::lock_guard<std::mutex> l(events_mutex);
 
     return events.size();
+}
+
+template<typename DataPointType> Eigen::MatrixXf DataClassifier<DataPointType>::getUnnormalizedLabeledMatrix() {
+    std::lock_guard<std::mutex> l(events_mutex);
+
+    return generateMatrixFromLabeledEvents();
+}
+
+template<typename DataPointType> Eigen::MatrixXf DataClassifier<DataPointType>::generateMatrixFromLabeledEvents() {
+    Eigen::MatrixXf result;
+
+    long rows = event_label_manager.labeled_events.back().feature_vector.size();
+    long cols = event_label_manager.labeled_events.size();
+
+    result.resize(rows, cols);
+    for (int i = 0; i < cols; ++i) {
+        Eigen::VectorXf vec = convertToEigenVector(this->event_label_manager.labeled_events[i]);
+        result.col(i) = vec;
+    }
+    return result;
 }
 
 

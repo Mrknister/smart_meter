@@ -1,13 +1,13 @@
 #include <iostream>
 #include <thread>
-#define DEBUG_OUTPU
+#define DEBUG_OUTPUT
 #include "PowerMetaData.h"
 #include "AsyncDataQueue.h"
 #include "BluedHdf5InputSource.h"
 
 #include "EventDetector.h"
 #include "DataClassifier.h"
-
+#include "Utilities.h"
 int main(int argc, char **argv) {
 
     using namespace std;

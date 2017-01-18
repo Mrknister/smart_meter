@@ -11,8 +11,8 @@ class ClassificationConfig {
 public:
     int number_of_rms = 20;
     NormalizationMode::NormalizationMode normalization_mode = NormalizationMode::Standardize;
-    long number_of_harmonics = 20;
-    long harmonics_search_radius = 5;
+    unsigned long number_of_harmonics = 10;
+    unsigned long harmonics_search_radius = 5;
 
 
 };

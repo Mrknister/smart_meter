@@ -9,34 +9,38 @@
 #include <EventDetector.h>
 #include <chrono>
 #include <DataClassifier.h>
+#include <fstream>
+#include <random>
 
 using namespace std;
 
 void fillBuffer(std::vector<DefaultDataPoint> &buffer, const PowerMetaData &conf);
 
-void
+vector<chrono::milliseconds>
 fillDataQueue(AsyncDataQueue<DefaultDataPoint> *to_fill, PowerMetaData conf, std::chrono::milliseconds max_time_diff,
               unsigned long number_of_runs);
 
-void fillDataQueue(AsyncDataQueue<DefaultDataPoint> *to_fill, PowerMetaData conf,
-                   std::chrono::milliseconds max_time_diff = std::chrono::milliseconds(1000));
+vector<chrono::milliseconds> fillDataQueue(AsyncDataQueue<DefaultDataPoint> *to_fill, PowerMetaData conf,
+                                           std::chrono::milliseconds max_time_diff = std::chrono::milliseconds(1000));
 
-void
+vector<chrono::milliseconds>
 fillDataQueue(AsyncDataQueue<DefaultDataPoint> *to_fill, PowerMetaData conf, std::chrono::milliseconds max_time_diff,
               unsigned long number_of_runs) {
     auto buffer_size = conf.sample_rate / 2;
     std::vector<DefaultDataPoint> buffer(buffer_size);
-
+    std::vector<std::chrono::milliseconds> durations;
+    durations.reserve(number_of_runs);
+    fillBuffer(buffer, conf);
     for (unsigned long i = 0; i < number_of_runs; ++i) {
         auto time = std::chrono::system_clock::now();
-        fillBuffer(buffer, conf);
         to_fill->addDataPoints(buffer.begin(), buffer.end());
         auto time_difference = std::chrono::system_clock::now() - time;
+        durations.push_back(chrono::duration_cast<chrono::milliseconds>(time_difference));
 
         if (time_difference > max_time_diff) {
             cerr << "Time difference is bigger than the maximum allowed time difference: " << max_time_diff.count()
-                 << " < " << chrono::duration_cast<chrono::milliseconds>(time_difference).count() << "\nfailed in run "
-                 << i << " after processing " << buffer_size * i << endl;
+                 << " > " << chrono::duration_cast<chrono::milliseconds>(time_difference).count() << "\nfailed in run "
+                 << i << " after processing " << buffer_size * i << " elements" << endl;
             throw std::exception();
         }
         if (i % 1000 == 0) {
@@ -46,23 +50,34 @@ fillDataQueue(AsyncDataQueue<DefaultDataPoint> *to_fill, PowerMetaData conf, std
     }
     cout << "\ndone" << endl;
     to_fill->notifyStreamEnd();
+    return durations;
 
 }
 
-void
+vector<chrono::milliseconds>
 fillDataQueue(AsyncDataQueue<DefaultDataPoint> *to_fill, PowerMetaData conf, std::chrono::milliseconds max_time_diff) {
-    unsigned long recommended_number_of_runs = (conf.max_data_points_in_queue / conf.sample_rate + 1) * 300;
+    unsigned long recommended_number_of_runs = (conf.max_data_points_in_queue / conf.sample_rate + 1) * 600;
     cout << "running the setup with " << recommended_number_of_runs << " buffer fills" << endl;
-    fillDataQueue(to_fill, conf, max_time_diff, recommended_number_of_runs);
+    return fillDataQueue(to_fill, conf, max_time_diff, recommended_number_of_runs);
 }
 
 void fillBuffer(std::vector<DefaultDataPoint> &buffer, const PowerMetaData &conf) {
 
+    std::random_device rd;
+    std::mt19937 mt(rd());
+    std::uniform_real_distribution<float> dist(-20.f, 20.f);
+    for(auto& data_point: buffer ) {
+        data_point.amps = dist(mt);
+        data_point.volts = dist(mt);
+
+    }
 }
+
+void storeDurationsToFile(const vector<chrono::milliseconds> &to_store, const string &file_name);
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
-        cout << "usage speed_setup <config file>";
+        cout << "usage speed_setup <config file> [<times file>] [<max duration per second in ms>]";
         return -1;
     }
 
@@ -71,8 +86,13 @@ int main(int argc, char *argv[]) {
         std::cout << "Could not load config file: " << argv[1] << "\n";
         return -1;
     }
+    chrono::milliseconds max_time_diff(1000);
+    if(argc >= 4) {
+        max_time_diff = chrono::milliseconds(atol(argv[3]));
+    }
 
-    std::cout << conf << endl;
+
+        std::cout << conf << endl;
     DynamicStreamMetaData stream_meta_data;
     stream_meta_data.setFixedPowerMetaData(conf);
     AsyncDataQueue<DefaultDataPoint> data_queue;
@@ -80,7 +100,7 @@ int main(int argc, char *argv[]) {
 
 
     EventDetector<DefaultEventDetectionStrategy, DefaultDataPoint> detect;
-    detect.startAnalyzing(&data_queue, &stream_meta_data, DefaultEventDetectionStrategy(-100.0f));
+    detect.startAnalyzing(&data_queue, &stream_meta_data, DefaultEventDetectionStrategy(1000.0f));
 
     DataClassifier<DefaultDataPoint> analyzer;
     analyzer.startClassification();
@@ -96,7 +116,25 @@ int main(int argc, char *argv[]) {
                       << " there are currently " << elements_on_stack << " elements on the stack" << endl;
         }
     });
-    fillDataQueue(&data_queue, conf);
+    auto durations = fillDataQueue(&data_queue, conf, max_time_diff);
     detect.join();
     analyzer.stopAnalyzingWhenDone();
+    cout << "maximum time taken to process data: " << std::max_element(durations.begin(), durations.end())->count()
+         << endl;
+    if (argc >= 3) {
+        storeDurationsToFile(durations, argv[2]);
+    }
+
 }
+
+void storeDurationsToFile(const vector<chrono::milliseconds> &to_store, const string &file_name) {
+    ofstream out(file_name);
+    if (out.bad()) {
+        throw std::exception();
+    }
+    for (const auto &duration: to_store) {
+        out << duration.count() << "\n";
+    }
+}
+
+

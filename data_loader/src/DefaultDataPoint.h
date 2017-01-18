@@ -7,7 +7,7 @@
  * 
  */
 struct DefaultDataPoint {
-    typedef float datum;
+    using datum = float;
 
      DefaultDataPoint(float volt_value, float ampere_value) : volts(volt_value), amps(ampere_value) {}
 

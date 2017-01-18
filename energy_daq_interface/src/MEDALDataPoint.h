@@ -16,7 +16,7 @@ struct MEDALDataPoint {
 
     void voltage(datum v) { this->volts = v; }
 
-    datum ampere() const { return currents[0]; }
+    datum ampere() const { return std::accumulate(currents, currents+NUMBER_OF_MEDAL_CHANNELS, 0.f); }
 
     void ampere(datum a) {
         throw std::exception(); // not to be used, u dimwit

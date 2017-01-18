@@ -34,38 +34,6 @@ template<typename DataPointType = DefaultDataPoint> class EventLabelManager {
 
 public:
 
-    EventLabelManager() {}
-
-    ~EventLabelManager() {}
-
-    // Copy constructor needs more work
-    EventLabelManager(EventLabelManager const &copy) {
-        this->labeled_events = copy.labeled_events;
-        this->unlabeled_events = copy.unlabeled_events;
-        this->labels = copy.labels;
-    }
-
-    EventLabelManager &operator=(EventLabelManager rhs) {
-        rhs.swap(*this);
-        return *this;
-    }
-
-    void swap(EventLabelManager &s) noexcept {
-        std::swap(s.labeled_events, this->labeled_events);
-        std::swap(s.unlabeled_events, this->unlabeled_events);
-        std::swap(s.labels, this->labels);
-    }
-
-    // C++11
-    EventLabelManager(EventLabelManager &&src) noexcept {
-        this->swap(src);
-    }
-
-    EventLabelManager &operator=(EventLabelManager &&src) noexcept {
-        src.swap(*this);
-        return *this;
-    }
-
 
     bool findLabelAndAddEvent(const EventFeatures &event);
 

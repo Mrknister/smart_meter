@@ -33,7 +33,11 @@ fillDataQueue(AsyncDataQueue<DefaultDataPoint> *to_fill, PowerMetaData conf, std
     fillBuffer(buffer, conf);
     for (unsigned long i = 0; i < number_of_runs; ++i) {
         auto time = std::chrono::system_clock::now();
+
+        // insert half a second 2 times
         to_fill->addDataPoints(buffer.begin(), buffer.end());
+        to_fill->addDataPoints(buffer.begin(), buffer.end());
+
         auto time_difference = std::chrono::system_clock::now() - time;
         durations.push_back(chrono::duration_cast<chrono::milliseconds>(time_difference));
 
@@ -100,7 +104,7 @@ int main(int argc, char *argv[]) {
 
 
     EventDetector<DefaultEventDetectionStrategy, DefaultDataPoint> detect;
-    detect.startAnalyzing(&data_queue, &stream_meta_data, DefaultEventDetectionStrategy(1000.0f));
+    detect.startAnalyzing(&data_queue, &stream_meta_data, DefaultEventDetectionStrategy(-1000.0f));
 
     DataClassifier<DefaultDataPoint> analyzer;
     analyzer.startClassification();

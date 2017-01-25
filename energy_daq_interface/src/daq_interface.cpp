@@ -1,3 +1,5 @@
+
+#define DEBUG_OUTPUT
 #include <AsyncDataQueue.h>
 #include <DataClassifier.h>
 #include <EventDetector.h>
@@ -29,7 +31,12 @@ extern "C" void init_daq_interface(unsigned int sample_rate) {
 
     stream_meta_data.setFixedPowerMetaData(meta_data);
     stream_meta_data.syncTimePoint(0,boost::posix_time::second_clock::local_time());
-    event_detector.startAnalyzing(&data_queue,&stream_meta_data,DefaultEventDetectionStrategy(0.1));
+    event_detector.storage.setEventStorageCallback([](Event<MEDALDataPoint>& event) {
+        event_analyzer.pushEvent(event);
+    });
+    event_detector.startAnalyzing(&data_queue,&stream_meta_data,DefaultEventDetectionStrategy(0.3));
+
+    event_analyzer.startClassification();
 
 }
 
